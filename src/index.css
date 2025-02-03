@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* General Styling */
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: rgb(32, 32, 32);
+  background-image: 
+    linear-gradient(45deg, black 25%, transparent 25%, transparent 75%, black 75%, black),
+    linear-gradient(45deg, black 25%, transparent 25%, transparent 75%, black 75%, black),
+    linear-gradient(to bottom, rgb(8, 8, 8), rgb(32, 32, 32));
+  background-size: 10px 10px, 10px 10px, 10px 5px;
+  background-position: 0px 0px, 5px 5px, 0px 0px;
+  color: white;
+  text-align: center;
+}
+
+/* Navigation */
+nav {
+  padding: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  /* 
+   * The gradient background is handled by Tailwind in the JSX 
+   * (e.g. "bg-gradient-to-r from-black to-gray-900").
+   * If you want a fallback or prefer CSS, uncomment:
+   *
+   * background: linear-gradient(to right, #000, #333);
+   */
+}
+
+.nav-link {
+  text-decoration: none;
+  color: white;
+  font-size: 1.2rem;
+  transition: color 0.3s ease-in-out;
+  margin: 0 15px;
+}
+
+.nav-link:hover {
+  color: #38bdf8;
+}
+
+/* Hero Section */
+.neon-text {
+  color: #38bdf8;
+  text-shadow: 
+    0 0 5px #38bdf8,
+    0 0 10px #38bdf8,
+    0 0 15px #38bdf8;
+}
+
+/* Service Cards */
+.service-card {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 10px;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.service-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+}
+
+.icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  color: #38bdf8;
+}
+
+.service-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.service-description {
+  font-size: 1rem;
+  color: #a3a3a3;
+}
+
+/* Social Icons */
+.social-icon {
+  color: #a3a3a3;
+  transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.social-icon:hover {
+  color: #38bdf8;
+  transform: scale(1.2);
+}
+
+/* Impressum Section */
+#impressum {
+  margin-top: 40px;
+  padding: 20px;
+  background: #1a1a1a;
+  border-radius: 10px;
+}
