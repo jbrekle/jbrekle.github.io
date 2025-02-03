@@ -5,6 +5,10 @@ on:
     branches:
       - main   # Adjust if your default branch is named differently
   workflow_dispatch:
+  
+# Grant the workflow write access to contents
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
