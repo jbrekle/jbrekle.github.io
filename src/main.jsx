@@ -15,5 +15,5 @@ if (display === 'true') {
   );
 } else {
   document.getElementById('root').innerHTML =
-    '<p style="color: red; text-align: center; margin-top: 20%;">under construction</p>';
+    '<p style="color: red; text-align: center; margin-top: 20%;">currently under construction</p>';
 }
