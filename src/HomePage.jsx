@@ -232,8 +232,8 @@ function HomePage({ language }) {
       animate="animate"
       exit="exit"
     >
-      <section className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <div className="flex justify-center">
+      <section className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-8 items-center">
+        <div className="flex justify-center md:col-span-1">
           <div className="w-40 h-40 rounded-full overflow-hidden ring-4 ring-blue-400">
             <img
               src={t.teamMembers[0].image}
@@ -243,7 +243,7 @@ function HomePage({ language }) {
             />
           </div>
         </div>
-        <div className="text-center md:text-left">
+        <div className="text-center md:text-left md:col-span-3">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">{t.homeSalesClaim}</h1>
           <p className="text-gray-300 text-lg">{t.heroSubtitle}</p>
         </div>
@@ -290,7 +290,6 @@ function HomePage({ language }) {
     </motion.div>
   );
 }
-
 function ServicesPage({ language }) {
   const t = texts[language];
   return (
@@ -307,34 +306,34 @@ function ServicesPage({ language }) {
         </h2>
       </section>
       <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        <div className="service-card">
-          <FaSalesforce className="icon" />
-          <h3 className="service-title">
+        <div className="team-card text-center">
+          <FaSalesforce className="icon mx-auto" />
+          <h3 className="service-title mt-4">
             {t.servicesSalesforceTitle}
           </h3>
-          <div className="service-description text-gray-300">
+          <div className="service-description text-gray-300 mt-2">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {t.servicesSalesforceDescription}
             </ReactMarkdown>
           </div>
         </div>
-        <div className="service-card">
-          <FaMicrosoft className="icon" />
-          <h3 className="service-title">
+        <div className="team-card text-center">
+          <FaMicrosoft className="icon mx-auto" />
+          <h3 className="service-title mt-4">
             {t.servicesDotnetTitle}
           </h3>
-          <div className="service-description text-gray-300">
+          <div className="service-description text-gray-300 mt-2">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {t.servicesDotnetDescription}
             </ReactMarkdown>
           </div>
         </div>
-        <div className="service-card">
-          <FaReact className="icon" />
-          <h3 className="service-title">
+        <div className="team-card text-center">
+          <FaReact className="icon mx-auto" />
+          <h3 className="service-title mt-4">
             {t.servicesReactTitle}
           </h3>
-          <div className="service-description text-gray-300">
+          <div className="service-description text-gray-300 mt-2">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {t.servicesReactDescription}
             </ReactMarkdown>
@@ -366,7 +365,7 @@ function TeamPage({ language }) {
           {t.teamMembers.map((member, idx) => (
             <div
               key={idx}
-              className="bg-gray-800 p-4 rounded-xl flex flex-col items-center text-center hover:scale-105 transition-transform"
+              className="team-card flex flex-col items-center text-center transition-transform"
             >
               <img
                 src={member.image}
@@ -381,12 +380,16 @@ function TeamPage({ language }) {
           ))}
         </div>
       </div>
+      <p className="text-gray-400 text-center mb-8 max-w-2xl mx-auto mt-10">
+          Come join us!
+        </p>
     </motion.div>
   );
 }
 
-function LocationPage({ language }) {
+function LocationPage({ language}) {
   const t = texts[language];
+
   return (
     <motion.div
       className="text-white min-h-screen pt-24 px-4"
@@ -395,13 +398,35 @@ function LocationPage({ language }) {
       animate="animate"
       exit="exit"
     >
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-4xl font-bold mb-4">
-          {t.locationTitle}
-        </h2>
-        <p className="text-gray-300 leading-relaxed">
-          {t.locationDesc}
-        </p>
+      <div className="max-w-3xl mx-auto mb-8">
+        <h2 className="text-4xl font-bold mb-4">{t.locationTitle}</h2>
+        <ReactMarkdown remarkPlugins={[remarkGfm]} className="text-gray-300 leading-relaxed space-y-4">
+          {t.locationIntro}
+        </ReactMarkdown>
+      </div>
+
+      <ParallaxSection
+        image={t.locationImageOne}
+        height="50vh"
+        content={t.locationParallaxOne}
+      />
+
+      <div className="max-w-3xl mx-auto my-8 space-y-4 text-gray-300 leading-relaxed">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {t.locationParagraphOne}
+        </ReactMarkdown>
+      </div>
+
+      <ParallaxSection
+        image={t.locationImageTwo}
+        height="50vh"
+        content={t.locationParallaxTwo}
+      />
+
+      <div className="max-w-3xl mx-auto mt-8 space-y-4 text-gray-300 leading-relaxed">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {t.locationParagraphTwo}
+        </ReactMarkdown>
       </div>
     </motion.div>
   );

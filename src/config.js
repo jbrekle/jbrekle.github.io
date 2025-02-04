@@ -1,10 +1,13 @@
-
 import portrait_jonas from "../img/team_jonas_brekle.jpg";
 import portrait_mona from "../img/team_mona_li.jpg";
 import portrait_gustav from "../img/team_gustav_tischner.jpg";
 import testimonial1 from "../img/testimonial_1.jpg";
 import testimonial2 from "../img/testimonial_2.jpg";
 import testimonial3 from "../img/testimonial_3.jpg";
+
+/* NEW IMAGES */
+import leipzig from "../img/leipzig.jpg";
+import desk from "../img/desk.jpg";
 
 export const texts = {
   en: {
@@ -77,14 +80,14 @@ Feel free to reach out for inquiries, collaborations, or just to say hello.
 BreLi Consulting  
 Inhaber: Jonas Brekle  
 Tschaikowskistraße 9, 04105 Leipzig, Germany  
-E-Mail: jonas.brekle@gmail.com
+E-Mail: jonas.brekle@gmail.com  
 
 **Haftungsausschluss (Disclaimer):**  
 Alle Inhalte dieser Website wurden mit größter Sorgfalt erstellt. Für Richtigkeit, Vollständigkeit und Aktualität der Inhalte übernehmen wir jedoch keine Gewähr.  
-Externe Links werden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft, jedoch liegt die Verantwortung beim jeweiligen Betreiber der verlinkten Seiten.
+Externe Links werden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft, jedoch liegt die Verantwortung beim jeweiligen Betreiber der verlinkten Seiten.  
 
 **Umsatzsteuer-Identifikationsnummer (wenn nötig)**  
-DE123456789
+DE123456789  
 
 Weitere Angaben gemäß § 5 TMG entfallen, da es sich um ein Freiberufler-Angebot handelt.
     `,
@@ -114,11 +117,33 @@ and a relentless focus on helping clients achieve their goals.
       }
     ],
     locationTitle: "Location & Work Style",
-    locationDesc: `
-Though based in **Leipzig**, Germany, we work with clients all across Europe (and beyond).  
-Our team travels regularly for on-site meetings and workshops. Remote collaboration is the default, ensuring flexibility and minimal overhead.
+
+    /* NEW IMAGES FOR PARALLAX SECTIONS */
+    locationImageOne: leipzig,
+    locationImageTwo: desk,
+
+    /* INTRO AT TOP */
+    locationIntro: `
+Our base in **Leipzig** offers a vibrant startup culture, historic charm, and excellent infrastructure for modern business. 
+We embrace face-to-face meetings as much as remote collaborations, giving you the flexibility to choose.
+    `,
+    /* FIRST PARALLAX text */
+    locationParallaxOne: `Leipzig – A City of Innovation and Culture`,
+    /* FIRST TEXT BLOCK */
+    locationParagraphOne: `
+We frequently work in shared offices, cafés, or even quiet libraries, ensuring a relaxed yet productive atmosphere. 
+Whether you prefer to **meet in-person** or schedule an **online conference**, we accommodate your needs.
+    `,
+    /* SECOND PARALLAX text */
+    locationParallaxTwo: `Where Work Meets Inspiration`,
+    /* SECOND TEXT BLOCK */
+    locationParagraphTwo: `
+However, if you're in the area—or just passing through—**we're happy to meet** in Leipzig. 
+Between entrepreneurial meetups, modern coworking hubs, and cozy coffee shops, there's always a spot 
+to brainstorm new ideas and discuss projects in person.
     `
   },
+
   de: {
     navHome: "Startseite",
     navServices: "Dienstleistungen",
@@ -228,10 +253,32 @@ Leidenschaft für Technologie und den klaren Fokus darauf, unseren Kunden zum Er
       }
     ],
     locationTitle: "Standort & Arbeitsweise",
-    locationDesc: `
-Obwohl wir in **Leipzig** (Deutschland) ansässig sind, arbeiten wir mit Kunden in ganz Europa (und darüber hinaus) zusammen.  
-Unser Team reist regelmäßig für Vor-Ort-Termine und Workshops. In der Regel arbeiten wir jedoch remote und bieten so 
-maximale Flexibilität bei minimalen Reisekosten.
+
+    /* NEW IMAGES FOR PARALLAX SECTIONS */
+    locationImageOne: leipzig,
+    locationImageTwo: desk,
+
+    /* INTRO AT TOP */
+    locationIntro: `
+Unser Firmensitz in **Leipzig** besticht durch eine lebendige Start-up-Kultur, historische Kulisse und 
+hervorragende Infrastruktur für modernes Arbeiten. Ob persönliches Treffen oder Remote-Zusammenarbeit, 
+wir richten uns ganz nach Ihren Vorstellungen.
+    `,
+    /* FIRST PARALLAX text */
+    locationParallaxOne: `Leipzig – eine Stadt von Innovation und Kultur`,
+    /* FIRST TEXT BLOCK */
+    locationParagraphOne: `
+Wir arbeiten gern in geteilten Büros, Cafés oder sogar in ruhigen Bibliotheken, um eine entspannte, produktive 
+Atmosphäre zu schaffen. Ob Sie ein persönliches Treffen bevorzugen oder ein Online-Meeting planen möchten, 
+wir sind flexibel und passen uns Ihren Wünschen an.
+    `,
+    /* SECOND PARALLAX text */
+    locationParallaxTwo: `Wo Arbeit auf Inspiration trifft    `,
+    /* SECOND TEXT BLOCK */
+    locationParagraphTwo: `
+Sollten Sie jedoch in der Nähe sein—oder auf der Durchreise—treffen wir Sie gerne in Leipzig. 
+Zwischen innovativen Gründer-Treffs, modernen Coworking-Spaces und gemütlichen Cafés finden wir 
+bestimmt einen Ort, um neue Ideen zu entwickeln und Projekte zu besprechen.
     `
   }
 };
