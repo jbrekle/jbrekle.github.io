@@ -52,7 +52,7 @@ communication throughout the project lifecycle. Let’s explore how we can accel
     servicesTitle: "Services",
     servicesSalesforceTitle: "Salesforce Development & Consulting",
     servicesSalesforceDescription: `
-From custom *Flows* to robust **Apex** classes, we specialize in building scalable and secure Salesforce solutions.  
+From custom *Flows* to robust **Apex**, we specialize in building scalable and secure Salesforce solutions.  
 Our approach includes thorough planning, optimal Lightning Component usage, and strategic consulting to ensure your CRM platform grows with your business demands.
     `,
     servicesDotnetTitle: ".NET Development & System Integration",
