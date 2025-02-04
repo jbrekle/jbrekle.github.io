@@ -33,6 +33,10 @@ jobs:
       - name: Build project
         run: npm run build
 
+      # Step 4x: Build the project using "npm run build"
+      - name: list project
+        run: ls -R
+
       # Step 5: Deploy the build output to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
