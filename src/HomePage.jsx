@@ -1,28 +1,39 @@
-// App.js
-import React, { useState, useEffect } from "react";
+// App.jsx
+import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Link,
-  useLocation
-} from "react-router-dom";
-import { Menu, X, Globe } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Typewriter } from "react-simple-typewriter";
-import { FaSalesforce, FaMicrosoft, FaReact, FaGithub, FaLinkedin, FaXingSquare, FaCommentDots } from "react-icons/fa";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import "./index.css";
-import { texts } from "./config"; // import config from separate file
-import logo from "../img/logo.webp"; // update logo path to use assets in dist
+  useNavigate,
+  useLocation,
+  Outlet,
+} from 'react-router-dom';
+import { Menu, X, Globe } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Typewriter } from 'react-simple-typewriter';
+import { 
+  FaSalesforce, 
+  FaMicrosoft, 
+  FaReact, 
+  FaGithub, 
+  FaLinkedin, 
+  FaXingSquare, 
+  FaCommentDots 
+} from 'react-icons/fa';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import './index.css';
+import { texts } from './config';
+import logo from '../img/logo.webp';
 
-// --- Page transition variants ---
+// Page transition variants for Framer Motion
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 }
+  exit: { opacity: 0, y: -20 },
 };
+
 
 // --- Parallax Section Component ---
 function ParallaxSection({ image, height, content }) {
@@ -47,47 +58,51 @@ function ParallaxSection({ image, height, content }) {
   );
 }
 
-// --- Navbar Component ---
-// Changed the background to solid black and ensured it’s fixed on top with a high z-index.
-function Navbar({ language, setLanguage }) {
+function Navbar({ language }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const t = texts[language];
-  const GlobeIcon = Globe;
+
+  // When switching languages, update the URL accordingly.
+  const handleLanguageSwitch = () => {
+    const currentPath = location.pathname;
+    if (language === 'en') {
+      // Switching from English to default (German): remove the "/en" prefix
+      if (currentPath.startsWith('/en')) {
+        const newPath = currentPath.replace(/^\/en/, '') || '/';
+        navigate(newPath, { replace: true });
+      }
+    } else {
+      // Switching from German to English: add the "/en" prefix (but avoid duplicating if already present)
+      if (!currentPath.startsWith('/en')) {
+        const newPath = currentPath === '/' ? '/en' : `/en${currentPath}`;
+        navigate(newPath, { replace: true });
+      }
+    }
+  };
+
+  // Helper to generate links based on language
+  const linkPath = (path) => (language === 'en' ? `/en${path}` : path);
+
   return (
     <nav
-      className="
-        bg-black
-        text-white 
-        p-4 
-        shadow-lg 
-        shadow-gray-400/40 
-        rounded-xl 
-        fixed 
-        top-4 
-        w-[95%] 
-        left-1/2 
-        -translate-x-1/2 
-        z-50
-      "
+      className="bg-black text-white p-4 shadow-lg shadow-gray-400/40 rounded-xl fixed top-4 w-[95%] left-1/2 -translate-x-1/2 z-50"
     >
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="flex items-center text-xl font-bold">
+        <Link to={language === 'en' ? '/en' : '/'} className="flex items-center text-xl font-bold">
           <img src={logo} alt="logo" className="w-8 h-8 mr-2" />
           {t.brandName}
         </Link>
-        <button
-          className="md:hidden p-2 focus:outline-none"
-          onClick={() => setIsOpen(!isOpen)}
-        >
+        <button className="md:hidden p-2 focus:outline-none" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
         <ul className="hidden md:flex gap-6">
           <li>
             <Link
-              to="/"
+              to={linkPath('/')}
               className={`hover:text-gray-400 transition-colors duration-200 ${
-                location.pathname === "/" ? "text-blue-300 font-semibold" : ""
+                location.pathname === (language === 'en' ? '/en' : '/') ? 'text-blue-300 font-semibold' : ''
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -96,9 +111,9 @@ function Navbar({ language, setLanguage }) {
           </li>
           <li>
             <Link
-              to="/services"
+              to={linkPath('/services')}
               className={`hover:text-gray-400 transition-colors duration-200 ${
-                location.pathname === "/services" ? "text-blue-300 font-semibold" : ""
+                location.pathname === linkPath('/services') ? 'text-blue-300 font-semibold' : ''
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -107,9 +122,9 @@ function Navbar({ language, setLanguage }) {
           </li>
           <li>
             <Link
-              to="/team"
+              to={linkPath('/team')}
               className={`hover:text-gray-400 transition-colors duration-200 ${
-                location.pathname === "/team" ? "text-blue-300 font-semibold" : ""
+                location.pathname === linkPath('/team') ? 'text-blue-300 font-semibold' : ''
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -118,9 +133,9 @@ function Navbar({ language, setLanguage }) {
           </li>
           <li>
             <Link
-              to="/location"
+              to={linkPath('/location')}
               className={`hover:text-gray-400 transition-colors duration-200 ${
-                location.pathname === "/location" ? "text-blue-300 font-semibold" : ""
+                location.pathname === linkPath('/location') ? 'text-blue-300 font-semibold' : ''
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -129,9 +144,9 @@ function Navbar({ language, setLanguage }) {
           </li>
           <li>
             <Link
-              to="/contact"
+              to={linkPath('/contact')}
               className={`hover:text-gray-400 transition-colors duration-200 ${
-                location.pathname === "/contact" ? "text-blue-300 font-semibold" : ""
+                location.pathname === linkPath('/contact') ? 'text-blue-300 font-semibold' : ''
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -140,9 +155,9 @@ function Navbar({ language, setLanguage }) {
           </li>
           <li>
             <Link
-              to="/impressum"
+              to={linkPath('/impressum')}
               className={`hover:text-gray-400 transition-colors duration-200 ${
-                location.pathname === "/impressum" ? "text-blue-300 font-semibold" : ""
+                location.pathname === linkPath('/impressum') ? 'text-blue-300 font-semibold' : ''
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -151,90 +166,48 @@ function Navbar({ language, setLanguage }) {
           </li>
         </ul>
         <button
-          onClick={() => setLanguage(language === "en" ? "de" : "en")}
+          onClick={handleLanguageSwitch}
           className="ml-4 text-white hover:text-gray-400 transition-colors duration-200 hidden md:flex items-center"
         >
-          <GlobeIcon className="w-5 h-5 mr-1" />
+          <Globe className="w-5 h-5 mr-1" />
           {language.toUpperCase()}
         </button>
       </div>
       {isOpen && (
         <ul className="md:hidden bg-gray-700 p-4 space-y-2 text-center mt-2 rounded-lg">
           <li>
-            <Link
-              to="/"
-              className={`block py-1 ${
-                location.pathname === "/" ? "text-blue-300 font-semibold" : ""
-              }`}
-              onClick={() => setIsOpen(false)}
-            >
+            <Link to={linkPath('/')} className="block py-1" onClick={() => setIsOpen(false)}>
               {t.navHome}
             </Link>
           </li>
           <li>
-            <Link
-              to="/services"
-              className={`block py-1 ${
-                location.pathname === "/services" ? "text-blue-300 font-semibold" : ""
-              }`}
-              onClick={() => setIsOpen(false)}
-            >
+            <Link to={linkPath('/services')} className="block py-1" onClick={() => setIsOpen(false)}>
               {t.navServices}
             </Link>
           </li>
           <li>
-            <Link
-              to="/team"
-              className={`block py-1 ${
-                location.pathname === "/team" ? "text-blue-300 font-semibold" : ""
-              }`}
-              onClick={() => setIsOpen(false)}
-            >
+            <Link to={linkPath('/team')} className="block py-1" onClick={() => setIsOpen(false)}>
               {t.navTeam}
             </Link>
           </li>
           <li>
-            <Link
-              to="/location"
-              className={`block py-1 ${
-                location.pathname === "/location" ? "text-blue-300 font-semibold" : ""
-              }`}
-              onClick={() => setIsOpen(false)}
-            >
+            <Link to={linkPath('/location')} className="block py-1" onClick={() => setIsOpen(false)}>
               {t.navLocation}
             </Link>
           </li>
           <li>
-            <Link
-              to="/contact"
-              className={`block py-1 ${
-                location.pathname === "/contact" ? "text-blue-300 font-semibold" : ""
-              }`}
-              onClick={() => setIsOpen(false)}
-            >
+            <Link to={linkPath('/contact')} className="block py-1" onClick={() => setIsOpen(false)}>
               {t.navContact}
             </Link>
           </li>
           <li>
-            <Link
-              to="/impressum"
-              className={`block py-1 ${
-                location.pathname === "/impressum" ? "text-blue-300 font-semibold" : ""
-              }`}
-              onClick={() => setIsOpen(false)}
-            >
+            <Link to={linkPath('/impressum')} className="block py-1" onClick={() => setIsOpen(false)}>
               {t.navImpressum}
             </Link>
           </li>
           <li className="pt-2 border-t border-gray-600">
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                setLanguage(language === "en" ? "de" : "en");
-              }}
-              className="text-white hover:text-gray-400 transition-colors duration-200 flex items-center justify-center"
-            >
-              <GlobeIcon className="w-5 h-5 mr-1" />
+            <button onClick={handleLanguageSwitch} className="text-white hover:text-gray-400 transition-colors duration-200 flex items-center justify-center">
+              <Globe className="w-5 h-5 mr-1" />
               {language.toUpperCase()}
             </button>
           </li>
@@ -244,12 +217,13 @@ function Navbar({ language, setLanguage }) {
   );
 }
 
-// --- Home Page ---
+/* ========================
+   PAGE COMPONENTS
+   ======================== */
+
+// HomePage with success stories section
 function HomePage({ language }) {
   const t = texts[language];
-  // Use the team member image from the config instead of a separate import.
-  const jonasPortrait = t.teamMembers[0].image;
-
   return (
     <motion.div
       className="text-white min-h-screen pt-24"
@@ -262,10 +236,10 @@ function HomePage({ language }) {
         <div className="flex justify-center">
           <div className="w-40 h-40 rounded-full overflow-hidden ring-4 ring-blue-400">
             <img
-              src={jonasPortrait}
+              src={t.teamMembers[0].image}
               alt="Portrait Jonas Brekle"
               className="object-cover w-full h-full"
-              style={{ objectPosition: "50% 0%" }}
+              style={{ objectPosition: '50% 0%' }}
             />
           </div>
         </div>
@@ -317,7 +291,6 @@ function HomePage({ language }) {
   );
 }
 
-// --- Services Page ---
 function ServicesPage({ language }) {
   const t = texts[language];
   return (
@@ -329,12 +302,16 @@ function ServicesPage({ language }) {
       exit="exit"
     >
       <section className="text-center">
-        <h2 className="text-4xl font-bold mb-6">{t.servicesTitle}</h2>
+        <h2 className="text-4xl font-bold mb-6">
+          {t.servicesTitle}
+        </h2>
       </section>
       <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
         <div className="service-card">
           <FaSalesforce className="icon" />
-          <h3 className="service-title">{t.servicesSalesforceTitle}</h3>
+          <h3 className="service-title">
+            {t.servicesSalesforceTitle}
+          </h3>
           <div className="service-description text-gray-300">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {t.servicesSalesforceDescription}
@@ -343,7 +320,9 @@ function ServicesPage({ language }) {
         </div>
         <div className="service-card">
           <FaMicrosoft className="icon" />
-          <h3 className="service-title">{t.servicesDotnetTitle}</h3>
+          <h3 className="service-title">
+            {t.servicesDotnetTitle}
+          </h3>
           <div className="service-description text-gray-300">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {t.servicesDotnetDescription}
@@ -352,7 +331,9 @@ function ServicesPage({ language }) {
         </div>
         <div className="service-card">
           <FaReact className="icon" />
-          <h3 className="service-title">{t.servicesReactTitle}</h3>
+          <h3 className="service-title">
+            {t.servicesReactTitle}
+          </h3>
           <div className="service-description text-gray-300">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {t.servicesReactDescription}
@@ -364,7 +345,6 @@ function ServicesPage({ language }) {
   );
 }
 
-// --- Team Page ---
 function TeamPage({ language }) {
   const t = texts[language];
   return (
@@ -376,7 +356,9 @@ function TeamPage({ language }) {
       exit="exit"
     >
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl font-bold mb-4 text-center">{t.teamTitle}</h2>
+        <h2 className="text-4xl font-bold mb-4 text-center">
+          {t.teamTitle}
+        </h2>
         <p className="text-gray-400 text-center mb-8 max-w-2xl mx-auto">
           {t.teamDesc}
         </p>
@@ -390,7 +372,7 @@ function TeamPage({ language }) {
                 src={member.image}
                 alt={member.name}
                 className="w-32 h-32 mb-4 object-cover rounded-full"
-                style={{ objectPosition: "50% 40%" }}
+                style={{ objectPosition: '50% 40%' }}
               />
               <h3 className="text-xl font-bold">{member.name}</h3>
               <p className="text-blue-400 mb-2">{member.title}</p>
@@ -403,7 +385,6 @@ function TeamPage({ language }) {
   );
 }
 
-// --- Location Page ---
 function LocationPage({ language }) {
   const t = texts[language];
   return (
@@ -415,7 +396,9 @@ function LocationPage({ language }) {
       exit="exit"
     >
       <div className="max-w-3xl mx-auto">
-        <h2 className="text-4xl font-bold mb-4">{t.locationTitle}</h2>
+        <h2 className="text-4xl font-bold mb-4">
+          {t.locationTitle}
+        </h2>
         <p className="text-gray-300 leading-relaxed">
           {t.locationDesc}
         </p>
@@ -424,11 +407,8 @@ function LocationPage({ language }) {
   );
 }
 
-// --- Contact Page ---
 function ContactPage({ language }) {
   const t = texts[language];
-  const emailNoLabel = t.contactEmail.replace(/^Email:\s*/i, "");
-  const phoneNoLabel = t.contactPhone.replace(/^Phone:\s*/i, "");
   return (
     <motion.div
       className="text-white min-h-screen pt-24 px-4"
@@ -437,45 +417,28 @@ function ContactPage({ language }) {
       animate="animate"
       exit="exit"
     >
-      <h2 className="text-3xl font-bold text-center mb-4">{t.contactTitle}</h2>
+      <h2 className="text-3xl font-bold text-center mb-4">
+        {t.contactTitle}
+      </h2>
       <div className="max-w-xl mx-auto mt-2 text-center text-gray-300 space-y-4">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{t.contactText}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {t.contactText}
+        </ReactMarkdown>
         <p>
-          Email:{" "}
-          <a href={`mailto:${emailNoLabel}`} className="text-blue-400 hover:underline">
-            {emailNoLabel}
-          </a>
+          Email: <a href={`mailto:${t.contactEmail}`} className="text-blue-400 hover:underline">{t.contactEmail}</a>
         </p>
         <p>
-          Phone:{" "}
-          <a href={`tel:${phoneNoLabel}`} className="text-blue-400 hover:underline">
-            {phoneNoLabel}
-          </a>
+          Phone: <a href={`tel:${t.contactPhone}`} className="text-blue-400 hover:underline">{t.contactPhone}</a>
         </p>
       </div>
       <div className="mt-6 flex justify-center space-x-4">
-        <a
-          href="https://github.com/Jonas_Brekle"
-          target="_blank"
-          rel="noreferrer"
-          className="social-icon inline-block hover:text-blue-400 transition duration-200"
-        >
+        <a href="https://github.com/Jonas_Brekle" target="_blank" rel="noreferrer" className="social-icon inline-block hover:text-blue-400 transition duration-200">
           <FaGithub size={30} />
         </a>
-        <a
-          href="https://www.linkedin.com/in/jonas-brekle-072a25289/"
-          target="_blank"
-          rel="noreferrer"
-          className="social-icon inline-block hover:text-blue-400 transition duration-200"
-        >
+        <a href="https://www.linkedin.com/in/jonas-brekle-072a25289/" target="_blank" rel="noreferrer" className="social-icon inline-block hover:text-blue-400 transition duration-200">
           <FaLinkedin size={30} />
         </a>
-        <a
-          href="https://www.xing.com/profile/Jonas_Brekle"
-          target="_blank"
-          rel="noreferrer"
-          className="social-icon inline-block hover:text-blue-400 transition duration-200"
-        >
+        <a href="https://www.xing.com/profile/Jonas_Brekle" target="_blank" rel="noreferrer" className="social-icon inline-block hover:text-blue-400 transition duration-200">
           <FaXingSquare size={30} />
         </a>
       </div>
@@ -483,7 +446,6 @@ function ContactPage({ language }) {
   );
 }
 
-// --- Impressum Page ---
 function ImpressumPage({ language }) {
   const t = texts[language];
   return (
@@ -495,7 +457,9 @@ function ImpressumPage({ language }) {
       exit="exit"
     >
       <div className="max-w-3xl mx-auto">
-        <h2 className="text-3xl font-bold mb-4">{t.impressumTitle}</h2>
+        <h2 className="text-3xl font-bold mb-4">
+          {t.impressumTitle}
+        </h2>
         <ReactMarkdown remarkPlugins={[remarkGfm]} className="text-gray-300 leading-relaxed">
           {t.impressumContent}
         </ReactMarkdown>
@@ -504,44 +468,56 @@ function ImpressumPage({ language }) {
   );
 }
 
-// --- Main App Component ---
-export default function App() {
-  const [language, setLanguage] = useState(
-    navigator.language.startsWith("de") ? "de" : "en"
-  );
+/* ========================
+   LANGUAGE LAYOUT COMPONENT
+   ======================== */
+function LanguageLayout({ language }) {
   return (
-    <Router>
-      <Navbar language={language} setLanguage={setLanguage} />
+    <>
+      <Navbar language={language} />
       <AnimatePresence mode="wait">
-        <Routes>
-          <Route path="/" element={<HomePage language={language} />} />
-          <Route path="/services" element={<ServicesPage language={language} />} />
-          <Route path="/team" element={<TeamPage language={language} />} />
-          <Route path="/location" element={<LocationPage language={language} />} />
-          <Route path="/contact" element={<ContactPage language={language} />} />
-          <Route path="/impressum" element={<ImpressumPage language={language} />} />
-          <Route path="*" element={<HomePage language={language} />} />
-        </Routes>
+        <Outlet />
       </AnimatePresence>
       <Link
-        to="/contact"
-        className="
-          fixed 
-          bottom-4 
-          right-4 
-          bg-blue-600 
-          text-white 
-          rounded-full 
-          p-4 
-          shadow-lg 
-          hover:animate-pulse 
-          flex 
-          items-center 
-          justify-center
-        "
+        to={language === 'en' ? '/en/contact' : '/contact'}
+        className="fixed bottom-4 right-4 bg-blue-600 text-white rounded-full p-4 shadow-lg hover:animate-pulse flex items-center justify-center"
       >
         <FaCommentDots size={24} />
       </Link>
+    </>
+  );
+}
+
+/* ========================
+   APP ROUTER
+   ======================== */
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        {/* English Routes */}
+        <Route path="/en" element={<LanguageLayout language="en" />}>
+          <Route index element={<HomePage language="en" />} />
+          <Route path="home" element={<HomePage language="en" />} />
+          <Route path="services" element={<ServicesPage language="en" />} />
+          <Route path="team" element={<TeamPage language="en" />} />
+          <Route path="location" element={<LocationPage language="en" />} />
+          <Route path="contact" element={<ContactPage language="en" />} />
+          <Route path="impressum" element={<ImpressumPage language="en" />} />
+          <Route path="*" element={<HomePage language="en" />} />
+        </Route>
+        {/* Default German Routes */}
+        <Route path="/" element={<LanguageLayout language="de" />}>
+          <Route index element={<HomePage language="de" />} />
+          <Route path="home" element={<HomePage language="de" />} />
+          <Route path="services" element={<ServicesPage language="de" />} />
+          <Route path="team" element={<TeamPage language="de" />} />
+          <Route path="location" element={<LocationPage language="de" />} />
+          <Route path="contact" element={<ContactPage language="de" />} />
+          <Route path="impressum" element={<ImpressumPage language="de" />} />
+          <Route path="*" element={<HomePage language="de" />} />
+        </Route>
+      </Routes>
     </Router>
   );
 }
