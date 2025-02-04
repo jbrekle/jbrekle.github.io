@@ -33,8 +33,10 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: clean project
+      - name: clean project1
         run: rm -rf src
+      - name: clean project2
+        run: rm -rf node_modules
 
       - name: list project
         run: ls -lhR
