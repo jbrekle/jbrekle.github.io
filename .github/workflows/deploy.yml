@@ -33,13 +33,15 @@ jobs:
       - name: Build project
         run: npm run build
 
-      # Step 4x: Build the project using "npm run build"
+      - name: clean project
+        run: rm -rf src
+
       - name: list project
-        run: ls -R
+        run: ls -lhR
 
       # Step 5: Deploy the build output to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./   # Update this path if your build output folder differs
+          publish_dir: ./dist   # Update this path if your build output folder differs
