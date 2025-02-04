@@ -138,7 +138,7 @@ Whether you prefer to **meet in-person** or schedule an **online conference**, w
     locationParallaxTwo: `Where Work Meets Inspiration`,
     /* SECOND TEXT BLOCK */
     locationParagraphTwo: `
-However, if you're in the area—or just passing through—**we're happy to meet** in Leipzig. 
+If you're in the area — or just passing through — **we're happy to meet** in Leipzig. 
 Between entrepreneurial meetups, modern coworking hubs, and cozy coffee shops, there's always a spot 
 to brainstorm new ideas and discuss projects in person.
     `
@@ -276,7 +276,7 @@ wir sind flexibel und passen uns Ihren Wünschen an.
     locationParallaxTwo: `Wo Arbeit auf Inspiration trifft    `,
     /* SECOND TEXT BLOCK */
     locationParagraphTwo: `
-Sollten Sie jedoch in der Nähe sein—oder auf der Durchreise—treffen wir Sie gerne in Leipzig. 
+Sollten Sie  in der Nähe sein — oder auf der Durchreise — treffen wir Sie gerne in Leipzig. 
 Zwischen innovativen Gründer-Treffs, modernen Coworking-Spaces und gemütlichen Cafés finden wir 
 bestimmt einen Ort, um neue Ideen zu entwickeln und Projekte zu besprechen.
     `
