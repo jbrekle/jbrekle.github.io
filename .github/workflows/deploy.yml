@@ -38,4 +38,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist   # Update this path if your build output folder differs
+          publish_dir: ./   # Update this path if your build output folder differs
