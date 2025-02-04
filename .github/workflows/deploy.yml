@@ -5,7 +5,7 @@ on:
     branches:
       - main   # Adjust if your default branch is named differently
   workflow_dispatch:
-  
+
 # Grant the workflow write access to contents
 permissions:
   contents: write
@@ -35,7 +35,7 @@ jobs:
 
       # Step 5: Deploy the build output to GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist   # Update this path if your build output folder differs
