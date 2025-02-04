@@ -4,8 +4,6 @@ import portrait_gustav from "../img/team_gustav_tischner.jpg";
 import testimonial1 from "../img/testimonial_1.jpg";
 import testimonial2 from "../img/testimonial_2.jpg";
 import testimonial3 from "../img/testimonial_3.jpg";
-
-/* NEW IMAGES */
 import leipzig from "../img/leipzig.jpg";
 import desk from "../img/desk.jpg";
 
