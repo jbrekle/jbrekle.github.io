@@ -365,7 +365,7 @@
         "undo": "↺",
         "redo": "↻",
         "exportTooltip": "Das Szenario wird serialisiert und Base64-codiert.",
-        "importTooltip": "Fügen Sie einen Base64-codierten Zustand ein.",
+        "importTooltip": "Laden Sie ein Base64-codiertes Szenario ein.",
         "undoTooltip": "Letzte Aktion rückgängig.",
         "redoTooltip": "Letzte rückgängig gemachte Aktion wiederholen.",
         "exportCopiedMessage": "In Zwischenablage kopiert!",
@@ -585,8 +585,8 @@
         }
       } else {
         var center={x:canvas.width/2,y:canvas.height/2};
-        lights=[ new Light(center,{x:Math.cos(Math.PI/4),y:Math.sin(Math.PI/4)}) ];
-        mirrors=[ new Mirror(center,0) ];
+        lights=[ new Light({x:center.x - 40, y: center.y - 50},{x:Math.cos(Math.PI/3),y:Math.sin(Math.PI/3)}) ];
+        mirrors=[ new Mirror({x:center.x, y: center.y + 50},0) ];
         materials=[ new Material(center,100,60,0.2) ];
         saveState();
       }

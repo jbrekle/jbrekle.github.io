@@ -256,14 +256,14 @@ function HomePage({ language }) {
           <Typewriter words={t.heroTitle} loop cursor />
         </h2>
       </section>
-      <section className="max-w-3xl mx-auto px-4 text-gray-300 text-center md:text-left leading-relaxed space-y-4">
+      <section className="max-w-3xl mx-auto px-4 text-gray-300 text-center md:text-left leading-relaxed my-8">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {t.homeLongerText}
         </ReactMarkdown>
       </section>
       <ParallaxSection
-        image="https://images.unsplash.com/photo-1504805572947-34fad45aed93?ixlib=rb-4.0.3&auto=format&w=1600"
-        height="50vh"
+        image="https://images.unsplash.com/photo-1568992688065-536aad8a12f6?ixlib=rb-4.0.3&auto=format&w=1600"
+        height="30vh"
         content=""
       />
       <section className="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -283,10 +283,11 @@ function HomePage({ language }) {
         ))}
       </section>
       <ParallaxSection
-        image="https://images.unsplash.com/photo-1473691955023-da1c49c97aae?ixlib=rb-4.0.3&auto=format&w=1600"
-        height="40vh"
+        image="https://images.unsplash.com/photo-1504805572947-34fad45aed93?ixlib=rb-4.0.3&auto=format&w=1600"
+        height="50vh"
         content=""
       />
+      <a href="optics-showcase.html">.</a>
     </motion.div>
   );
 }
