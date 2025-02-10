@@ -217,11 +217,6 @@ function Navbar({ language }) {
   );
 }
 
-/* ========================
-   PAGE COMPONENTS
-   ======================== */
-
-// HomePage with success stories section
 function HomePage({ language }) {
   const t = texts[language];
   return (
