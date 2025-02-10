@@ -287,7 +287,7 @@ function HomePage({ language }) {
         height="50vh"
         content=""
       />
-      <a href="optics-showcase.html">.</a>
+      <a href="optics-showcase.html">&nbsp;</a>
     </motion.div>
   );
 }
