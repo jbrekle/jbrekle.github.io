@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Optics Simulation – Multi-Language</title>
+  <meta name="description" content="An optics simulation with reflection, refraction, mirror, material, and light sources, featuring multi-language support.">
+  <meta name="author" content="Jonas Brekle">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+      background: #f7f7f7;
+    }
+    #toolbar {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, #6dd5fa, #2980b9);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      z-index: 10;
+    }
+    .toolbar-group {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 5px;
+    }
+    #toolbar button {
+      background: #3498db;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      padding: 10px 15px;
+      margin: 3px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      position: relative;
+    }
+    #toolbar button:hover {
+      background: #2980b9;
+      transform: scale(1.05);
+    }
+    #toolbar small {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    #langControl {
+      margin-right: 20px;
+    }
+    #langControl label,
+    #langControl select {
+      font-size: 12px;
+    }
+    #reflectionControl label {
+      font-size: 12px;
+      margin-right: 5px;
+    }
+    #reflectionControl input[type="range"] {
+      width: 150px;
+    }
+    #reflectionControl input[type="number"] {
+      width: 70px;
+      margin-left: 5px;
+    }
+    .inactive { opacity: 0.5; }
+    canvas {
+      background: linear-gradient(135deg, #ece9e6, #ffffff);
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="toolbar">
+    <div class="toolbar-group">
+      <button id="addLight"></button>
+      <button id="addMirror"></button>
+      <button id="addMaterial"></button>
+      <button id="clearObjects"></button>
+    </div>
+    <div class="toolbar-group">
+      <button id="undoButton"></button>
+      <button id="redoButton"></button>
+      <button id="exportState"></button>
+      <button id="importState"></button>
+      <button id="infoButton">ℹ</button>
+    </div>
+    <div class="toolbar-group">
+      <div id="langControl">
+        <label id="langLabel" for="langSelect"></label>
+        <select id="langSelect"></select>
+      </div>
+      <div id="reflectionControl">
+        <label for="reflectionSlider"></label>
+        <input type="range" id="reflectionSlider" min="0" max="4" step="0.01" value="1.2041" title="Infinite reflections are not possible.">
+        <input type="number" id="reflectionInput" placeholder="Custom" value="16">
+      </div>
+    </div>
+    <small id="toolbarInfo"></small>
+  </div>
+
+  <canvas id="canvas"></canvas>
+
+  <script>
+    /********************************
+     * 1) Multi-language dictionary *
+     ********************************/
+    var translations = {
+      "en": {
+        "pageTitle": "Optics Simulation",
+        "language": "Language:",
+        "addLight": "Add Light",
+        "addMirror": "Add Mirror",
+        "addMaterial": "Add Material",
+        "clearObjects": "Clear All",
+        "exportState": "Export",
+        "importState": "Import",
+        "undo": "Undo",
+        "redo": "Redo",
+        "exportTooltip": "Copy this Base64-encoded state.",
+        "importTooltip": "Paste your Base64-encoded state.",
+        "undoTooltip": "Undo last action.",
+        "redoTooltip": "Redo last undone action.",
+        "exportCopiedMessage": "State copied to clipboard!",
+        "invalidState": "Invalid state format!",
+        "errorLoadingState": "Error loading state!",
+        "infoText": "Developed by Jonas Brekle – GPL 3 license – github.com/jbrekle – with chatgpt o3-mini-high.",
+        "toolbarInfo": "Drag handles to move/rotate/resize.",
+        "reflectionsLabel": "Reflection Depth:",
+        "sliderTooltip": "Infinite reflections are not possible.",
+        "move": "Move",
+        "rotate": "Rotate",
+        "resize": "Resize",
+        "refraction": "Refraction"
+      },
+      "zh": {
+        "pageTitle": "光学模拟",
+        "language": "语言:",
+        "addLight": "添加光源",
+        "addMirror": "添加镜子",
+        "addMaterial": "添加材料",
+        "clearObjects": "清空所有",
+        "exportState": "导出",
+        "importState": "导入",
+        "undo": "撤销",
+        "redo": "重做",
+        "exportTooltip": "复制Base64编码的场景。",
+        "importTooltip": "粘贴你的Base64编码场景。",
+        "undoTooltip": "撤销上一步操作。",
+        "redoTooltip": "重做上一步撤销的操作。",
+        "exportCopiedMessage": "已复制到剪贴板！",
+        "invalidState": "无效的场景格式！",
+        "errorLoadingState": "加载场景时出错！",
+        "infoText": "由Jonas Brekle开发 - GPL3 - github.com/jbrekle",
+        "toolbarInfo": "拖动句柄进行移动/旋转/调整大小。",
+        "reflectionsLabel": "反射次数:",
+        "sliderTooltip": "无限反射不可行。",
+        "move": "移动",
+        "rotate": "旋转",
+        "resize": "调整大小",
+        "refraction": "折射"
+      },
+      "es": {
+        "pageTitle": "Simulación Óptica",
+        "language": "Idioma:",
+        "addLight": "Agregar Luz",
+        "addMirror": "Agregar Espejo",
+        "addMaterial": "Agregar Material",
+        "clearObjects": "Limpiar todo",
+        "exportState": "Exportar",
+        "importState": "Importar",
+        "undo": "Deshacer",
+        "redo": "Rehacer",
+        "exportTooltip": "Copia este estado codificado en Base64.",
+        "importTooltip": "Pega tu estado en Base64.",
+        "undoTooltip": "Deshacer la última acción.",
+        "redoTooltip": "Rehacer la última acción deshecha.",
+        "exportCopiedMessage": "Estado copiado al portapapeles!",
+        "invalidState": "Formato de estado inválido!",
+        "errorLoadingState": "Error al cargar el estado!",
+        "infoText": "Desarrollado por Jonas Brekle – Licencia GPL 3",
+        "toolbarInfo": "Arrastra controles para mover/rotar/redimensionar.",
+        "reflectionsLabel": "Reflexiones:",
+        "sliderTooltip": "Reflexiones infinitas no son posibles.",
+        "move": "Mover",
+        "rotate": "Rotar",
+        "resize": "Redimensionar",
+        "refraction": "Refracción"
+      },
+      "hi": {
+        "pageTitle": "ऑप्टिक्स सिमुलेशन",
+        "language": "भाषा:",
+        "addLight": "लाइट जोड़ें",
+        "addMirror": "दर्पण जोड़ें",
+        "addMaterial": "सामग्री जोड़ें",
+        "clearObjects": "सभी हटाएँ",
+        "exportState": "निर्यात",
+        "importState": "आयात",
+        "undo": "पूर्ववत",
+        "redo": "फिर से",
+        "exportTooltip": "Base64 एन्कोडेड स्टेट कॉपी करें।",
+        "importTooltip": "अपना Base64 एन्कोडेड स्टेट पेस्ट करें।",
+        "undoTooltip": "अंतिम क्रिया को पूर्ववत करें।",
+        "redoTooltip": "पुनः करें।",
+        "exportCopiedMessage": "क्लिपबोर्ड में कॉपी किया गया!",
+        "invalidState": "अमान्य स्टेट फॉर्मेट!",
+        "errorLoadingState": "स्टेट लोड करने में त्रुटि!",
+        "infoText": "Jonas Brekle द्वारा विकसित – GPL3",
+        "toolbarInfo": "मूव/रोटेट/साइज़ परिवर्तित करें।",
+        "reflectionsLabel": "परावर्तन:",
+        "sliderTooltip": "अनंत परावर्तन संभव नहीं।",
+        "move": "हिलाएँ",
+        "rotate": "घुमाएँ",
+        "resize": "आकार बदलें",
+        "refraction": "अपवर्तन"
+      },
+      "ar": {
+        "pageTitle": "محاكاة البصريات",
+        "language": "اللغة:",
+        "addLight": "أضف ضوء",
+        "addMirror": "أضف مرآة",
+        "addMaterial": "أضف مادة",
+        "clearObjects": "مسح الكل",
+        "exportState": "تصدير",
+        "importState": "استيراد",
+        "undo": "تراجع",
+        "redo": "إعادة",
+        "exportTooltip": "انسخ هذا السيناريو المشفر Base64.",
+        "importTooltip": "الصق السينारيو Base64 الخاص بك.",
+        "undoTooltip": "تراجع عن آخر إجراء.",
+        "redoTooltip": "أعد آخر إجراء.",
+        "exportCopiedMessage": "تم النسخ إلى الحافظة!",
+        "invalidState": "تنسيق حالة غير صالح!",
+        "errorLoadingState": "خطأ في تحميل الحالة!",
+        "infoText": "تم التطوير بواسطة Jonas Brekle – GPL3",
+        "toolbarInfo": "اسحب للتحريك/التدوير/تغيير الحجم.",
+        "reflectionsLabel": "الانعكاسات:",
+        "sliderTooltip": "الانعكاسات اللانهائية غير ممكنة.",
+        "move": "نقل",
+        "rotate": "دوران",
+        "resize": "تغيير الحجم",
+        "refraction": "انكسار"
+      },
+      "bn": {
+        "pageTitle": "অপ্টিক্স সিমুলেশন",
+        "language": "ভাষা:",
+        "addLight": "আলো যোগ করুন",
+        "addMirror": "আয়না যোগ করুন",
+        "addMaterial": "উপাদান যোগ করুন",
+        "clearObjects": "সব মুছে ফেলুন",
+        "exportState": "রপ্তানি",
+        "importState": "আমদানি",
+        "undo": "আনডু",
+        "redo": "রিডু",
+        "exportTooltip": "এই Base64 এনকোড করা স্টেট কপি করুন।",
+        "importTooltip": "আপনার Base64 এনকোড করা স্টেট পেস্ট করুন।",
+        "undoTooltip": "সর্বশেষ কাজ আনডু করুন।",
+        "redoTooltip": "সর্বশেষ আনডু করা কাজটি রিডু করুন।",
+        "exportCopiedMessage": "ক্লিপবোর্ডে কপি হয়েছে!",
+        "invalidState": "অবৈধ স্টেট ফরম্যাট!",
+        "errorLoadingState": "স্টেট লোড করতে ত্রুটি!",
+        "infoText": "Jonas Brekle দ্বারা উন্নত – GPL3",
+        "toolbarInfo": "মুভ/রোটেট/রিসাইজ করতে ড্র্যাগ করুন।",
+        "reflectionsLabel": "প্রতিফলন:",
+        "sliderTooltip": "অসীম প্রতিফলন সম্ভব নয়।",
+        "move": "সরান",
+        "rotate": "ঘোরান",
+        "resize": "আকার বদলান",
+        "refraction": "প্রবাহ"
+      },
+      "pt": {
+        "pageTitle": "Simulação Óptica",
+        "language": "Idioma:",
+        "addLight": "Adicionar Luz",
+        "addMirror": "Adicionar Espelho",
+        "addMaterial": "Adicionar Material",
+        "clearObjects": "Limpar Tudo",
+        "exportState": "Exportar",
+        "importState": "Importar",
+        "undo": "Desfazer",
+        "redo": "Refazer",
+        "exportTooltip": "Copie este estado codificado em Base64.",
+        "importTooltip": "Cole seu estado Base64.",
+        "undoTooltip": "Desfazer a última ação.",
+        "redoTooltip": "Refazer a última ação desfeita.",
+        "exportCopiedMessage": "Estado copiado para a área de transferência!",
+        "invalidState": "Formato de estado inválido!",
+        "errorLoadingState": "Erro ao carregar estado!",
+        "infoText": "Desenvolvido por Jonas Brekle – GPL3",
+        "toolbarInfo": "Arraste para mover/girar/redimensionar.",
+        "reflectionsLabel": "Reflexões:",
+        "sliderTooltip": "Reflexões infinitas não são possíveis.",
+        "move": "Mover",
+        "rotate": "Girar",
+        "resize": "Redimensionar",
+        "refraction": "Refração"
+      },
+      "ru": {
+        "pageTitle": "Оптическая симуляция",
+        "language": "Язык:",
+        "addLight": "Добавить свет",
+        "addMirror": "Добавить зеркало",
+        "addMaterial": "Добавить материал",
+        "clearObjects": "Очистить всё",
+        "exportState": "Экспорт",
+        "importState": "Импорт",
+        "undo": "Отмена",
+        "redo": "Повтор",
+        "exportTooltip": "Скопируйте это Base64-кодированное состояние.",
+        "importTooltip": "Вставьте ваше Base64-кодированное состояние.",
+        "undoTooltip": "Отменить последнее действие.",
+        "redoTooltip": "Повторить отменённое действие.",
+        "exportCopiedMessage": "Состояние скопировано в буфер обмена!",
+        "invalidState": "Недопустимый формат состояния!",
+        "errorLoadingState": "Ошибка загрузки состояния!",
+        "infoText": "Разработано Jonas Brekle – GPL3",
+        "toolbarInfo": "Перетащите, чтобы переместить/повернуть/изменить размер.",
+        "reflectionsLabel": "Отражения:",
+        "sliderTooltip": "Бесконечные отражения невозможны.",
+        "move": "Двигать",
+        "rotate": "Повернуть",
+        "resize": "Изм. размер",
+        "refraction": "Преломление"
+      },
+      "ja": {
+        "pageTitle": "光学シミュレーション",
+        "language": "言語:",
+        "addLight": "光を追加",
+        "addMirror": "鏡を追加",
+        "addMaterial": "マテリアル追加",
+        "clearObjects": "全てクリア",
+        "exportState": "エクスポート",
+        "importState": "インポート",
+        "undo": "取り消し",
+        "redo": "やり直し",
+        "exportTooltip": "Base64エンコードされた状態をコピー。",
+        "importTooltip": "Base64エンコードされた状態を貼り付け。",
+        "undoTooltip": "最後の操作を取り消す。",
+        "redoTooltip": "最後に取り消した操作をやり直す。",
+        "exportCopiedMessage": "クリップボードにコピーしました！",
+        "invalidState": "無効な状態フォーマット！",
+        "errorLoadingState": "状態の読み込みエラー！",
+        "infoText": "Jonas Brekleによって開発 - GPL3",
+        "toolbarInfo": "ドラッグして移動/回転/リサイズ。",
+        "reflectionsLabel": "反射回数:",
+        "sliderTooltip": "無限反射は不可能。",
+        "move": "移動",
+        "rotate": "回転",
+        "resize": "サイズ変更",
+        "refraction": "屈折"
+      },
+      "de": {
+        "pageTitle": "Optics Simulation",
+        "language": "Sprache:",
+        "addLight": "Licht hinzufügen",
+        "addMirror": "Spiegel hinzufügen",
+        "addMaterial": "Material hinzufügen",
+        "clearObjects": "Alle Objekte löschen",
+        "exportState": "Exportieren",
+        "importState": "Importieren",
+        "undo": "↺",
+        "redo": "↻",
+        "exportTooltip": "Das Szenario wird serialisiert und Base64-codiert.",
+        "importTooltip": "Laden Sie ein Base64-codiertes Szenario ein.",
+        "undoTooltip": "Letzte Aktion rückgängig.",
+        "redoTooltip": "Letzte rückgängig gemachte Aktion wiederholen.",
+        "exportCopiedMessage": "In Zwischenablage kopiert!",
+        "invalidState": "Ungültiges Format!",
+        "errorLoadingState": "Fehler beim Laden!",
+        "infoText": "Entwickelt von Jonas Brekle – GPL 3.",
+        "toolbarInfo": "Ziehe die Griffe, um zu verschieben/rotieren/skalieren.",
+        "reflectionsLabel": "Reflexionstiefe:",
+        "sliderTooltip": "Unendlich viele Reflexionen sind nicht möglich.",
+        "move": "Verschieben",
+        "rotate": "Drehen",
+        "resize": "Größe ändern",
+        "refraction": "Brechung"
+      }
+    };
+
+    var supportedLangs = ["en","zh","hi","es","ar","bn","pt","ru","ja","de"];
+    var defaultLang = navigator.language.slice(0,2);
+    if(!supportedLangs.includes(defaultLang)){
+      defaultLang="en";
+    }
+    var currentLang = translations[defaultLang] || translations["en"];
+
+    var langSelect=document.getElementById("langSelect");
+    var langLabel=document.getElementById("langLabel");
+
+    var languageNames={
+      "en":"English",
+      "zh":"中文",
+      "hi":"हिन्दी",
+      "es":"Español",
+      "ar":"العربية",
+      "bn":"বাংলা",
+      "pt":"Português",
+      "ru":"Русский",
+      "ja":"日本語",
+      "de":"Deutsch"
+    };
+    langSelect.innerHTML="";
+    supportedLangs.forEach(function(code){
+      var opt=document.createElement("option");
+      opt.value=code;
+      opt.innerText=languageNames[code];
+      if(code===defaultLang) opt.selected=true;
+      langSelect.appendChild(opt);
+    });
+
+    function updateUIText(){
+      document.title=currentLang.pageTitle;
+      document.getElementById("addLight").textContent=currentLang.addLight;
+      document.getElementById("addMirror").textContent=currentLang.addMirror;
+      document.getElementById("addMaterial").textContent=currentLang.addMaterial;
+      document.getElementById("clearObjects").textContent=currentLang.clearObjects;
+      document.getElementById("undoButton").textContent=currentLang.undo;
+      document.getElementById("redoButton").textContent=currentLang.redo;
+      document.getElementById("exportState").textContent=currentLang.exportState;
+      document.getElementById("importState").textContent=currentLang.importState;
+      document.getElementById("undoButton").title=currentLang.undoTooltip;
+      document.getElementById("redoButton").title=currentLang.redoTooltip;
+      document.getElementById("exportState").title=currentLang.exportTooltip;
+      document.getElementById("importState").title=currentLang.importTooltip;
+      document.getElementById("infoButton").title=currentLang.infoText;
+      document.getElementById("toolbarInfo").textContent=currentLang.toolbarInfo;
+      document.querySelector("#reflectionControl label").textContent=currentLang.reflectionsLabel;
+      document.querySelector("#reflectionControl input[type='range']").title=currentLang.sliderTooltip;
+      document.getElementById("langLabel").textContent=currentLang.language;
+    }
+
+    langSelect.addEventListener("change",function(){
+      currentLang=translations[langSelect.value] || translations["en"];
+      updateUIText();
+      render();
+    });
+
+    updateUIText();
+
+    /*********************************
+     * 2) Setup Canvas, Scene, etc.  *
+     *********************************/
+
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+
+    function resizeCanvas(){
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      render();
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function vec(x,y){ return {x:x,y:y};}
+    function add(a,b){ return {x:a.x+b.x,y:a.y+b.y};}
+    function sub(a,b){ return {x:a.x-b.x,y:a.y-b.y};}
+    function scale(a,s){return {x:a.x*s,y:a.y*s};}
+    function length(a){return Math.sqrt(a.x*a.x+a.y*a.y);}
+    function dot(a,b){return a.x*b.x+a.y*b.y;}
+    function normalize(a){ var L=length(a); if(L===0)return {x:0,y:0}; return {x:a.x/L,y:a.y/L}; }
+    function rotate(a,ang){return {x:a.x*Math.cos(ang)-a.y*Math.sin(ang), y:a.x*Math.sin(ang)+a.y*Math.cos(ang)};}
+    function cross(a,b){ return a.x*b.y - a.y*b.x;}
+
+    var lights=[];
+    var mirrors=[];
+    var materials=[];
+
+    var reflectionSlider=document.getElementById("reflectionSlider");
+    var reflectionInput=document.getElementById("reflectionInput");
+    var globalReflectionDepth=parseInt(reflectionInput.value,10)||16;
+
+    var undoStack=[];
+    var redoStack=[];
+
+    class Light{
+      constructor(pos, dir){
+        this.position=pos;
+        this.direction=normalize(dir);
+        this.isOn=true;
+      }
+    }
+    class Mirror{
+      constructor(pos, angle,length=150){
+        this.position=pos;
+        this.angle=angle;
+        this.length=length;
+      }
+      getEndpoints(){
+        var half=this.length/2;
+        var dx=Math.cos(this.angle)*half;
+        var dy=Math.sin(this.angle)*half;
+        return {
+          a:{x:this.position.x-dx,y:this.position.y-dy},
+          b:{x:this.position.x+dx,y:this.position.y+dy}
+        };
+      }
+    }
+    class Material{
+      constructor(pos, w=100,h=60,refraction=0.2){
+        this.position=pos;
+        this.width=w;
+        this.height=h;
+        this.refraction=refraction;
+      }
+      getCorners(){
+        let hw=this.width/2;
+        let hh=this.height/2;
+        if(!hw||!hh)return [];
+        return [
+          {x:this.position.x-hw, y:this.position.y-hh},
+          {x:this.position.x+hw, y:this.position.y-hh},
+          {x:this.position.x+hw, y:this.position.y+hh},
+          {x:this.position.x-hw, y:this.position.y+hh}
+        ];
+      }
+    }
+
+    function getCurrentState(){
+      return JSON.stringify({
+        lights:lights||[],
+        mirrors:mirrors||[],
+        materials:materials||[],
+        reflectionDepth:globalReflectionDepth
+      });
+    }
+    function saveHistory(){
+      undoStack.push(getCurrentState());
+      redoStack=[];
+    }
+    function saveState(){
+      var st={
+        lights:lights||[],
+        mirrors:mirrors||[],
+        materials:materials||[],
+        reflectionDepth:globalReflectionDepth
+      };
+      localStorage.setItem("canvasState", JSON.stringify(st));
+    }
+    function loadStateFromString(str){
+      try{
+        var st=JSON.parse(str);
+        if(st.lights && st.mirrors && st.materials){
+          lights=(st.lights||[]).map(o=>{
+            let L=new Light(o.position,o.direction);
+            if(typeof o.isOn!=="undefined")L.isOn=o.isOn;
+            return L;
+          });
+          mirrors=(st.mirrors||[]).map(o=>new Mirror(o.position,o.angle,o.length));
+          materials=(st.materials||[]).map(o=>new Material(o.position,o.width,o.height,o.refraction));
+          globalReflectionDepth=st.reflectionDepth||globalReflectionDepth;
+          reflectionInput.value=globalReflectionDepth;
+          reflectionSlider.value=(Math.log10(globalReflectionDepth)).toFixed(2);
+          render();
+          saveState();
+        }
+      }catch(e){
+        alert(currentLang.errorLoadingState+" "+e.message);
+      }
+    }
+    function loadState(){
+      var stStr=localStorage.getItem("canvasState");
+      if(stStr){
+        try{
+          var st=JSON.parse(stStr);
+          if(st.lights && st.mirrors && st.materials){
+            lights=(st.lights||[]).map(o=>{
+              let L=new Light(o.position,o.direction);
+              if(typeof o.isOn!=="undefined")L.isOn=o.isOn;
+              return L;
+            });
+            mirrors=(st.mirrors||[]).map(o=>new Mirror(o.position,o.angle,o.length));
+            materials=(st.materials||[]).map(o=>new Material(o.position,o.width,o.height,o.refraction));
+            globalReflectionDepth=st.reflectionDepth||globalReflectionDepth;
+            reflectionInput.value=globalReflectionDepth;
+            reflectionSlider.value=(Math.log10(globalReflectionDepth)).toFixed(2);
+          }
+        }catch(e){
+          console.error(currentLang.errorLoadingState,e);
+        }
+      } else {
+        var center={x:canvas.width/2,y:canvas.height/2};
+        lights=[ new Light({x:center.x - 40, y: center.y - 50},{x:Math.cos(Math.PI/3),y:Math.sin(Math.PI/3)}) ];
+        mirrors=[ new Mirror({x:center.x, y: center.y + 50},0) ];
+        materials=[ new Material(center,100,60,0.2) ];
+        saveState();
+      }
+    }
+    loadState();
+
+    reflectionSlider.addEventListener("input",function(){
+      reflectionSlider.classList.remove("inactive");
+      reflectionInput.classList.add("inactive");
+      var exponent=parseFloat(reflectionSlider.value);
+      globalReflectionDepth=Math.round(Math.pow(10,exponent));
+      reflectionInput.value=globalReflectionDepth;
+      render();
+      saveState();
+    });
+    reflectionInput.addEventListener("input",function(){
+      reflectionInput.classList.remove("inactive");
+      reflectionSlider.classList.add("inactive");
+      var val=parseInt(reflectionInput.value,10);
+      if(!isNaN(val)&&val>0){
+        globalReflectionDepth=val;
+      }
+      render();
+      saveState();
+    });
+
+    function pointLineDistance(p,a,b){
+      var ap=sub(p,a);
+      var ab=sub(b,a);
+      var abLen=length(ab);
+      if(abLen===0)return length(ap);
+      var t=dot(ap,ab)/(abLen*abLen);
+      if(t<0)return length(sub(p,a));
+      if(t>1)return length(sub(p,b));
+      var proj=add(a,scale(ab,t));
+      return length(sub(p,proj));
+    }
+    function raySegmentIntersection(rayOrigin,rayDir,segA,segB,eps){
+      var r=rayDir;
+      var s=sub(segB, segA);
+      var rxs=cross(r,s);
+      if(Math.abs(rxs)<eps)return null;
+      var qp=sub(segA,rayOrigin);
+      var t=cross(qp,s)/rxs;
+      var u=cross(qp,r)/rxs;
+      if(t>=eps && u>=0 && u<=1){
+        return {t:t,u:u};
+      }
+      return null;
+    }
+    function reflectVector(inc, normal){
+      var d=dot(inc,normal);
+      return normalize(sub(inc, scale(normal,2*d)));
+    }
+
+    function findNearestMirrorIntersection(origin, dir, eps){
+      var arrMirrors=Array.isArray(mirrors)?mirrors:[];
+      var nearest=null;
+      var minT=Infinity;
+      for(var i=0;i<arrMirrors.length;i++){
+        let mm=arrMirrors[i];
+        let ep=mm.getEndpoints();
+        let test=raySegmentIntersection(origin,dir,ep.a,ep.b,eps);
+        if(test && test.t<minT){
+          minT=test.t;
+          let hitPos=add(origin, scale(dir,test.t));
+          let dd=normalize(sub(ep.b,ep.a));
+          let norm={x:-dd.y,y:dd.x};
+          if(dot(dir,norm)>0) norm=scale(norm,-1);
+          nearest={ t:test.t, point:hitPos, normal:norm, mirror:mm};
+        }
+      }
+      return nearest;
+    }
+    function getRayCanvasIntersection(origin, dir){
+      var tVals=[];
+      if(dir.x>0) tVals.push((canvas.width-origin.x)/dir.x);
+      else if(dir.x<0) tVals.push((0-origin.x)/dir.x);
+      if(dir.y>0) tVals.push((canvas.height-origin.y)/dir.y);
+      else if(dir.y<0) tVals.push((0-origin.y)/dir.y);
+      let positives=tVals.filter(v=>v>0);
+      if(positives.length===0) return origin;
+      let t=Math.min(...positives);
+      return add(origin, scale(dir,t));
+    }
+
+    function intersectMaterial(mat,origin,dir,eps){
+      let corners=mat.getCorners();
+      if(!corners||corners.length<4) return null;
+      let best=null;
+      for(var i=0;i<4;i++){
+        let A=corners[i];
+        let B=corners[(i+1)%4];
+        let test=raySegmentIntersection(origin,dir,A,B,eps);
+        if(test){
+          let hitPos=add(origin, scale(dir,test.t));
+          if(!best||test.t<best.t){
+            best={ t:test.t, point:hitPos, edge:"edge"+i, material:mat};
+          }
+        }
+      }
+      return best;
+    }
+    function intersectMaterialExit(mat,origin,dir,entryEdge,eps){
+      let corners=mat.getCorners();
+      if(!corners||corners.length<4)return null;
+      let best=null;
+      for(var i=0;i<4;i++){
+        let A=corners[i];
+        let B=corners[(i+1)%4];
+        let test=raySegmentIntersection(origin,dir,A,B,eps);
+        if(test){
+          let pt=add(origin, scale(dir,test.t));
+          if(!best||test.t<best.t){
+            best={ t:test.t, point:pt, edge:"edge"+i};
+          }
+        }
+      }
+      return best;
+    }
+
+    function computeRayPath(light){
+      if(!light.isOn)return [light.position];
+      let path=[light.position];
+      let eps=1e-6;
+      let maxBounces=globalReflectionDepth;
+      let currentOrigin=light.position;
+      let currentDir=light.direction;
+      let currentMat=null;
+      let entryEdge=null;
+
+      for(var b=0;b<maxBounces;b++){
+        if(!currentMat){
+          let mInt=findNearestMirrorIntersection(currentOrigin,currentDir,eps);
+          let matHit=null;
+          let arrMats=Array.isArray(materials)?materials:[];
+          for(var i=0;i<arrMats.length;i++){
+            let test=intersectMaterial(arrMats[i],currentOrigin,currentDir,eps);
+            if(test && (!matHit||test.t<matHit.t)){
+              matHit=test;
+            }
+          }
+          let chosen=null;
+          if(mInt && matHit){
+            chosen=(mInt.t<matHit.t)? {type:"mirror", data:mInt}:{type:"matEnter", data:matHit};
+          } else if(mInt){
+            chosen={type:"mirror",data:mInt};
+          } else if(matHit){
+            chosen={type:"matEnter",data:matHit};
+          }
+          if(!chosen){
+            let boundary=getRayCanvasIntersection(currentOrigin,currentDir);
+            path.push(boundary);
+            break;
+          }
+          if(chosen.type==="mirror"){
+            path.push(chosen.data.point);
+            currentDir=reflectVector(currentDir, chosen.data.normal);
+            currentOrigin=add(chosen.data.point, scale(currentDir, eps*10));
+          } else {
+            path.push(chosen.data.point);
+            currentMat=chosen.data.material;
+            entryEdge=chosen.data.edge;
+            currentDir=rotate(currentDir, currentMat.refraction);
+            currentOrigin=add(chosen.data.point, scale(currentDir, eps*10));
+          }
+        } else {
+          let exit=intersectMaterialExit(currentMat, currentOrigin, currentDir, entryEdge, eps);
+          if(!exit)break;
+          path.push(exit.point);
+          currentDir=rotate(currentDir, -currentMat.refraction);
+          currentOrigin=add(exit.point, scale(currentDir, eps*10));
+          currentMat=null;
+          entryEdge=null;
+        }
+      }
+      return path;
+    }
+
+    var activeHandle=null;
+    var isDragging=false;
+    var currentMousePos={x:0,y:0};
+
+    function distToPos(a,b){return length(sub(a,b));}
+
+    function drawRemoveHandle(center, highlight){
+      ctx.save();
+      ctx.fillStyle=highlight?"rgba(255,0,0,0.8)":"rgba(255,0,0,0.5)";
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, 8, 0, 2*Math.PI);
+      ctx.fill();
+      ctx.strokeStyle="black";
+      ctx.lineWidth=1;
+      ctx.stroke();
+      ctx.fillStyle="white";
+      ctx.font="14px sans-serif";
+      ctx.textAlign="center";
+      ctx.textBaseline="middle";
+      ctx.fillText("✖", center.x, center.y);
+      ctx.restore();
+    }
+    function drawDragHandle(center, highlight){
+      ctx.save();
+      ctx.fillStyle=highlight?"rgba(0,200,0,0.8)":"rgba(0,200,0,0.5)";
+      ctx.beginPath();
+      ctx.rect(center.x-8, center.y-8,16,16);
+      ctx.fill();
+      ctx.strokeStyle="black";
+      ctx.lineWidth=1;
+      ctx.stroke();
+      ctx.fillStyle="white";
+      ctx.font="16px sans-serif";
+      ctx.textAlign="center";
+      ctx.textBaseline="middle";
+      ctx.fillText("✥", center.x, center.y);
+      ctx.restore();
+    }
+    function drawRotateHandle(center, highlight){
+      ctx.save();
+      ctx.fillStyle=highlight?"rgba(200,0,0,0.8)":"rgba(200,0,0,0.5)";
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, 8, 0, 2*Math.PI);
+      ctx.fill();
+      ctx.strokeStyle="black";
+      ctx.lineWidth=1;
+      ctx.stroke();
+      ctx.fillStyle="white";
+      ctx.font="14px sans-serif";
+      ctx.textAlign="center";
+      ctx.textBaseline="middle";
+      ctx.fillText("↻", center.x, center.y);
+      ctx.restore();
+    }
+    function drawResizeHandleAt(pos, highlight){
+      ctx.save();
+      ctx.fillStyle=highlight?"rgba(0,0,200,0.8)":"rgba(0,0,200,0.5)";
+      ctx.beginPath();
+      ctx.rect(pos.x-8, pos.y-8,16,16);
+      ctx.fill();
+      ctx.strokeStyle="black";
+      ctx.lineWidth=1;
+      ctx.stroke();
+      ctx.fillStyle="white";
+      ctx.font="14px sans-serif";
+      ctx.textAlign="center";
+      ctx.textBaseline="middle";
+      ctx.fillText("↔", pos.x, pos.y);
+      ctx.restore();
+    }
+    function drawRefractionHandle(center, highlight){
+      ctx.save();
+      ctx.fillStyle=highlight?"rgba(255,165,0,0.9)":"rgba(255,165,0,0.6)";
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, 8, 0, 2*Math.PI);
+      ctx.fill();
+      ctx.strokeStyle="black";
+      ctx.lineWidth=1;
+      ctx.stroke();
+      ctx.fillStyle="white";
+      ctx.font="14px sans-serif";
+      ctx.textAlign="center";
+      ctx.textBaseline="middle";
+      ctx.fillText("⮼", center.x, center.y);
+      ctx.restore();
+    }
+    function drawRefractionSliderAt(center, val){
+      var sliderHeight=30;
+      var minVal=-0.5, maxVal=0.5;
+      var topY=center.y - sliderHeight/2;
+      var bottomY=center.y + sliderHeight/2;
+      ctx.save();
+      ctx.strokeStyle="black";
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.moveTo(center.x, topY);
+      ctx.lineTo(center.x, bottomY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(center.x-5, topY);
+      ctx.lineTo(center.x+5, topY);
+      ctx.moveTo(center.x-5, bottomY);
+      ctx.lineTo(center.x+5, bottomY);
+      ctx.stroke();
+      var normalized=(val-minVal)/(maxVal-minVal);
+      var handleY=bottomY-normalized*sliderHeight;
+      ctx.fillStyle="orange";
+      ctx.beginPath();
+      ctx.arc(center.x, handleY,6,0,2*Math.PI);
+      ctx.fill();
+      ctx.fillStyle="black";
+      ctx.font="12px sans-serif";
+      ctx.textAlign="left";
+      ctx.textBaseline="middle";
+      ctx.fillText(val.toFixed(2), center.x+10, handleY);
+      ctx.restore();
+    }
+
+    function render(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+
+      let arrMirrors=Array.isArray(mirrors)?mirrors:[];
+      let arrLights=Array.isArray(lights)?lights:[];
+      let arrMaterials=Array.isArray(materials)?materials:[];
+
+      // draw mirrors
+      ctx.lineWidth=4;
+      ctx.strokeStyle="blue";
+      for(var i=0;i<arrMirrors.length;i++){
+        let m=arrMirrors[i];
+        let ep=m.getEndpoints();
+        ctx.beginPath();
+        ctx.moveTo(ep.a.x, ep.a.y);
+        ctx.lineTo(ep.b.x, ep.b.y);
+        ctx.stroke();
+      }
+
+      // materials
+      for(var i=0;i<arrMaterials.length;i++){
+        let mat=arrMaterials[i];
+        let c=mat.getCorners();
+        if(!c||c.length<4) continue;
+        ctx.fillStyle="rgba(100,100,255,0.3)";
+        ctx.strokeStyle="purple";
+        ctx.lineWidth=2;
+        ctx.beginPath();
+        ctx.moveTo(c[0].x,c[0].y);
+        for(var j=1;j<c.length;j++){
+          ctx.lineTo(c[j].x,c[j].y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // lights
+      for(var i=0;i<arrLights.length;i++){
+        let L=arrLights[i];
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(L.position.x,L.position.y,8,0,2*Math.PI);
+        ctx.fillStyle=L.isOn?"yellow":"gray";
+        ctx.fill();
+        ctx.strokeStyle="black";
+        ctx.lineWidth=1;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(L.position.x-5,L.position.y-5);
+        ctx.lineTo(L.position.x+5,L.position.y+5);
+        ctx.moveTo(L.position.x-5,L.position.y+5);
+        ctx.lineTo(L.position.x+5,L.position.y-5);
+        ctx.stroke();
+        ctx.restore();
+        ctx.strokeStyle="orange";
+        let tip=add(L.position, scale(L.direction,30));
+        ctx.beginPath();
+        ctx.moveTo(L.position.x,L.position.y);
+        ctx.lineTo(tip.x,tip.y);
+        ctx.stroke();
+        if(L.isOn){
+          let path=computeRayPath(L);
+          if(path && path.length>1){
+            ctx.strokeStyle="red";
+            ctx.lineWidth=2;
+            ctx.beginPath();
+            ctx.moveTo(path[0].x,path[0].y);
+            for(var p=1;p<path.length;p++){
+              ctx.lineTo(path[p].x,path[p].y);
+            }
+            ctx.stroke();
+          }
+        }
+      }
+
+      // hover handles
+      // lights
+      for(var i=0;i<arrLights.length;i++){
+        let L=arrLights[i];
+        let removePos= add(L.position,{x:0,y:-20});
+        let distRem= length(sub(currentMousePos, removePos));
+        let dragPos= add(L.position,{x:20,y:0});
+        let distDrag= length(sub(currentMousePos, dragPos));
+        let rotPos= add(L.position, scale(L.direction,40));
+        let distRot= length(sub(currentMousePos,rotPos));
+        let distCenter= length(sub(currentMousePos,L.position));
+        let isActive=(activeHandle&&activeHandle.object===L);
+        if(distRem<10||distDrag<10||distRot<10||distCenter<10||isActive){
+          drawRemoveHandle(removePos, distRem<10);
+          drawDragHandle(dragPos, distDrag<10);
+          drawRotateHandle(rotPos, distRot<10);
+        }
+      }
+
+      // mirrors
+      for(var i=0;i<arrMirrors.length;i++){
+        let mm=arrMirrors[i];
+        let removePos= add(mm.position,{x:0,y:-20});
+        let distRem= length(sub(currentMousePos, removePos));
+        let dragDist= length(sub(currentMousePos, mm.position));
+        let rotPos= add(mm.position, scale({x:-Math.sin(mm.angle),y:Math.cos(mm.angle)},30));
+        let distRot= length(sub(currentMousePos, rotPos));
+        let ep=mm.getEndpoints();
+        let distLine=pointLineDistance(currentMousePos,ep.a,ep.b);
+        let isActive=(activeHandle&&activeHandle.object===mm);
+        if(distRem<10||dragDist<10||distRot<10||distLine<10||isActive){
+          drawRemoveHandle(removePos, distRem<10);
+          drawDragHandle(mm.position, dragDist<10);
+          drawRotateHandle(rotPos, distRot<10);
+          let da= length(sub(currentMousePos, ep.a));
+          let db= length(sub(currentMousePos, ep.b));
+          if(da<10||isActive) drawResizeHandleAt(ep.a, da<10);
+          if(db<10||isActive) drawResizeHandleAt(ep.b, db<10);
+        }
+      }
+
+      // materials
+      for(var i=0;i<arrMaterials.length;i++){
+        let ma=arrMaterials[i];
+        let removePos= add(ma.position,{x:0,y:-20});
+        let distRem= length(sub(currentMousePos, removePos));
+        let distCenter= length(sub(currentMousePos, ma.position));
+        let c=ma.getCorners();
+        if(!c||c.length<4)continue;
+        let isActive=(activeHandle && activeHandle.object===ma);
+        var nearCorner=false;
+        for(var cc=0;cc<4;cc++){
+          let dd= length(sub(currentMousePos, c[cc]));
+          if(dd<10) nearCorner=true;
+        }
+        let topMid={x:(c[0].x+c[1].x)/2, y:(c[0].y+c[1].y)/2};
+        let distRef= length(sub(currentMousePos, topMid));
+        let halfSize=Math.max(ma.width, ma.height)/2+10;
+        if(distRem<10||distCenter<halfSize||nearCorner||distRef<10||isActive){
+          drawRemoveHandle(removePos, distRem<10);
+          drawDragHandle(ma.position, distCenter<10);
+          for(var cc=0;cc<4;cc++){
+            let dd= length(sub(currentMousePos, c[cc]));
+            drawResizeHandleAt(c[cc], dd<10);
+          }
+          if(distRef<10){
+            if(isActive && activeHandle.handle==="refraction"){
+              drawRefractionSliderAt(topMid, ma.refraction);
+            } else {
+              drawRefractionHandle(topMid, distRef<10);
+            }
+          }
+        }
+      }
+    }
+
+    canvas.addEventListener("mousedown",function(e){
+      currentMousePos={x:e.clientX,y:e.clientY};
+      isDragging=false;
+      activeHandle=null;
+
+      for(var i=lights.length-1;i>=0;i--){
+        let L=lights[i];
+        let removePos= add(L.position,{x:0,y:-20});
+        if(distToPos(currentMousePos, removePos)<10){
+          lights.splice(i,1);
+          render();
+          saveHistory();
+          saveState();
+          return;
+        }
+        let dragPos= add(L.position,{x:20,y:0});
+        if(distToPos(currentMousePos, dragPos)<10){
+          activeHandle={object:L,type:"light",handle:"drag", offset: sub(currentMousePos, dragPos)};
+          isDragging=true;
+          return;
+        }
+        let rotPos= add(L.position, scale(L.direction,40));
+        if(distToPos(currentMousePos, rotPos)<10){
+          activeHandle={object:L,type:"light",handle:"rotate"};
+          isDragging=true;
+          return;
+        }
+        if(distToPos(currentMousePos, L.position)<10){
+          activeHandle={object:L,type:"light",handle:"drag", offset: sub(currentMousePos, L.position)};
+          isDragging=true;
+          return;
+        }
+      }
+
+      for(var i=mirrors.length-1;i>=0;i--){
+        let mm=mirrors[i];
+        let removePos= add(mm.position,{x:0,y:-20});
+        if(distToPos(currentMousePos, removePos)<10){
+          mirrors.splice(i,1);
+          render();
+          saveHistory();
+          saveState();
+          return;
+        }
+        if(distToPos(currentMousePos, mm.position)<10){
+          activeHandle={object:mm,type:"mirror",handle:"drag",offset: sub(currentMousePos,mm.position)};
+          isDragging=true;
+          return;
+        }
+        let rPos= add(mm.position, scale({x:-Math.sin(mm.angle), y:Math.cos(mm.angle)},30));
+        if(distToPos(currentMousePos, rPos)<10){
+          activeHandle={object:mm,type:"mirror",handle:"rotate"};
+          isDragging=true;
+          return;
+        }
+        let ep=mm.getEndpoints();
+        if(distToPos(currentMousePos, ep.a)<10){
+          activeHandle={object:mm,type:"mirror",handle:"resize", endpoint:"a"};
+          isDragging=true;
+          return;
+        }
+        if(distToPos(currentMousePos, ep.b)<10){
+          activeHandle={object:mm,type:"mirror",handle:"resize", endpoint:"b"};
+          isDragging=true;
+          return;
+        }
+      }
+
+      for(var i=materials.length-1;i>=0;i--){
+        let ma=materials[i];
+        let removePos= add(ma.position,{x:0,y:-20});
+        if(distToPos(currentMousePos, removePos)<10){
+          materials.splice(i,1);
+          render();
+          saveHistory();
+          saveState();
+          return;
+        }
+        if(distToPos(currentMousePos, ma.position)<10){
+          activeHandle={object:ma,type:"material",handle:"drag",offset: sub(currentMousePos, ma.position)};
+          isDragging=true;
+          return;
+        }
+        let co=ma.getCorners();
+        if(co&&co.length===4){
+          for(var c=0;c<4;c++){
+            if(distToPos(currentMousePos, co[c])<10){
+              activeHandle={object:ma,type:"material",handle:"resize",corner:c};
+              isDragging=true;
+              return;
+            }
+          }
+          let topMid={x:(co[0].x+co[1].x)/2, y:(co[0].y+co[1].y)/2};
+          if(distToPos(currentMousePos, topMid)<10){
+            activeHandle={object:ma,type:"material",handle:"refraction",startY:e.clientY,initialRefraction:ma.refraction};
+            isDragging=true;
+            return;
+          }
+        }
+      }
+    });
+
+    canvas.addEventListener("mousemove",function(e){
+      currentMousePos={x:e.clientX,y:e.clientY};
+      if(isDragging && activeHandle){
+        if(activeHandle.handle==="drag"){
+          if(activeHandle.type==="light"){
+            var newPos=sub(currentMousePos,activeHandle.offset);
+            activeHandle.object.position=sub(newPos,{x:20,y:0});
+          } else {
+            activeHandle.object.position=sub(currentMousePos, activeHandle.offset);
+          }
+        } else if(activeHandle.handle==="rotate"){
+          if(activeHandle.type==="light"){
+            activeHandle.object.direction=normalize(sub(currentMousePos,activeHandle.object.position));
+          } else if(activeHandle.type==="mirror"){
+            var delta=sub(currentMousePos,activeHandle.object.position);
+            activeHandle.object.angle=Math.atan2(delta.y,delta.x);
+          }
+        } else if(activeHandle.handle==="resize"){
+          if(activeHandle.type==="mirror"){
+            let mm=activeHandle.object;
+            let ep=mm.getEndpoints();
+            let fixed=(activeHandle.endpoint==="a")?ep.b:ep.a;
+            let newEP=currentMousePos;
+            let newLen=Math.max(20,length(sub(fixed,newEP)));
+            let newCtr={x:(fixed.x+newEP.x)/2,y:(fixed.y+newEP.y)/2};
+            let newAng=Math.atan2(newEP.y-fixed.y,newEP.x-fixed.x);
+            mm.position=newCtr;
+            mm.angle=newAng;
+            mm.length=newLen;
+          } else if(activeHandle.type==="material"){
+            let ma=activeHandle.object;
+            let co=ma.getCorners();
+            if(co&&co.length===4){
+              let fc=(activeHandle.corner+2)%4;
+              let fix=co[fc];
+              let newC=currentMousePos;
+              let newW=Math.abs(newC.x-fix.x);
+              let newH=Math.abs(newC.y-fix.y);
+              let newCtr={x:(newC.x+fix.x)/2,y:(newC.y+fix.y)/2};
+              ma.width=newW;
+              ma.height=newH;
+              ma.position=newCtr;
+            }
+          }
+        } else if(activeHandle.handle==="refraction"&&activeHandle.type==="material"){
+          let dy=e.clientY-activeHandle.startY;
+          let ref=activeHandle.initialRefraction-(dy/30);
+          if(ref>0.5)ref=0.5;
+          if(ref<-0.5)ref=-0.5;
+          activeHandle.object.refraction=ref;
+        }
+        render();
+      } else {
+        render();
+      }
+    });
+
+    canvas.addEventListener("mouseup",function(e){
+      if(isDragging){
+        saveHistory();
+      }
+      isDragging=false;
+      activeHandle=null;
+      render();
+      saveState();
+    });
+
+    document.getElementById("addLight").addEventListener("click",function(){
+      let pos={x:canvas.width/2,y:canvas.height/2};
+      let L=new Light(pos,{x:Math.SQRT1_2, y:Math.SQRT1_2});
+      lights.push(L);
+      render();
+      saveHistory();
+      saveState();
+    });
+    document.getElementById("addMirror").addEventListener("click",function(){
+      let pos={x:canvas.width/2,y:canvas.height/2};
+      let M=new Mirror(pos,0);
+      mirrors.push(M);
+      render();
+      saveHistory();
+      saveState();
+    });
+    document.getElementById("addMaterial").addEventListener("click",function(){
+      let pos={x:canvas.width/2,y:canvas.height/2};
+      let mat=new Material(pos,100,60,0.2);
+      materials.push(mat);
+      render();
+      saveHistory();
+      saveState();
+    });
+    document.getElementById("clearObjects").addEventListener("click",function(){
+      lights=[];
+      mirrors=[];
+      materials=[];
+      render();
+      saveHistory();
+      saveState();
+    });
+
+    document.getElementById("exportState").addEventListener("click",function(){
+      let st={
+        lights:lights||[],
+        mirrors:mirrors||[],
+        materials:materials||[],
+        reflectionDepth:globalReflectionDepth
+      };
+      let stStr=JSON.stringify(st,null,2);
+      let encoded=btoa(stStr);
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(encoded).then(function(){
+          alert(currentLang.exportCopiedMessage);
+        }).catch(function(){
+          window.prompt(currentLang.exportTooltip,encoded);
+        });
+      } else {
+        window.prompt(currentLang.exportTooltip,encoded);
+      }
+    });
+
+    document.getElementById("importState").addEventListener("click",function(){
+      let input=window.prompt(currentLang.importTooltip);
+      if(input){
+        try{
+          let dec=atob(input);
+          loadStateFromString(dec);
+          saveHistory();
+          saveState();
+        }catch(e){
+          alert(currentLang.errorLoadingState+" "+e.message);
+        }
+      }
+    });
+
+    document.getElementById("undoButton").addEventListener("click",function(){
+      if(undoStack.length>0){
+        let curr=getCurrentState();
+        redoStack.push(curr);
+        let prev=undoStack.pop();
+        loadStateFromString(prev);
+        saveState();
+      }
+    });
+
+    document.getElementById("redoButton").addEventListener("click",function(){
+      if(redoStack.length>0){
+        let curr=getCurrentState();
+        undoStack.push(curr);
+        let nxt=redoStack.pop();
+        loadStateFromString(nxt);
+        saveState();
+      }
+    });
+
+    document.getElementById("infoButton").addEventListener("click",function(){
+      window.open("https://github.com/jbrekle","_blank");
+    });
+
+  </script>
+</body>
+</html>
