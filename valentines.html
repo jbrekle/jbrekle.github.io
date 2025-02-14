@@ -299,8 +299,8 @@
     class Player {
       constructor(avatar) {
         this.avatar = avatar; // "Mona" or "Jonas"
-        this.width = Math.max(100, canvas.width * 0.1);
-        this.height = this.width * 1.6;
+        this.width = 50;
+        this.height = this.width * 1.3;
         this.x = canvas.width / 2;
         this.y = canvas.height - 10;
         this.speed = 400;
@@ -315,8 +315,7 @@
         this.backpackJiggleTime = 0;
       }
       update(deltaTime) {
-        this.width = Math.max(100, canvas.width * 0.1);
-        this.height = this.width * 1.6;
+
         this.y = canvas.height - 10;
         this.x = Math.clamp(this.x, this.width/2, canvas.width - this.width/2);
         this.walkTime += deltaTime;
