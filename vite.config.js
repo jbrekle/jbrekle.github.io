@@ -11,7 +11,8 @@ export default defineConfig({
     copy({
       targets: [
         // directly to the build "dist" folder with no modifications.
-        { src: 'optics-showcase.html', dest: 'dist' }
+        { src: 'optics-showcase.html', dest: 'dist' },
+        { src: 'valentines.html', dest: 'dist' }
       ],
       // Use hook: 'writeBundle' to ensure the copy happens after the build is done
       hook: 'writeBundle'
