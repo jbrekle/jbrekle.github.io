@@ -71,7 +71,7 @@ export function createGroundPattern(ctx, color, detail) {
     pctx.fillStyle = "rgba(255,255,255,0.1)";
     for (let i = 0; i < 8; i++) {
       pctx.beginPath();
-      pctx.arc(Math.random()*50, Math.random()*50, 1, 0, Math.PI*2);
+      pctx.arc(Math.random() * 50, Math.random() * 50, 1, 0, Math.PI * 2);
       pctx.fill();
     }
   }

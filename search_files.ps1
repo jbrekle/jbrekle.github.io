@@ -83,13 +83,13 @@ foreach ($file in $files) {
     Write-Output ""
 }
 
-Write-Output "just emit the changed files, but be very precise, dont skip any implementation or leave it for later. always implement everything fully. it can be huge, thats ok"
+Write-Output "just emit the changed files, but be very precise, dont skip any implementation or leave it for later. dont skip comments, in places where the code is not self-speaking, like when drawing and styling. always implement everything fully. it can be huge, thats ok"
 Write-Output "please emit in format:
 // content-start Filename: filename.js
 content...
 // content-end Filename: filename.js
 
-so the filecontent should begin and end with the filename. i need this for postprocessing.
+so the filecontent should begin and end with the filename. i need this for postprocessing. make sure to not emit files multiple times and dont mention files that remain unchanged.
 "
 
 Write-Output "task: "

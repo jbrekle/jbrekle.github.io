@@ -5,10 +5,18 @@ let dragOffsetX = 0;
 let draggingPanda = null;
 let onShootProjectile = null;
 
+/* 
+  setOnShootProjectile: registers a callback to be executed when a projectile is to be shot.
+*/
 export function setOnShootProjectile(callback) {
   onShootProjectile = callback;
 }
 
+/* 
+  setupInput: Initializes pointer/touch event listeners on the canvas.
+  NOTE: Instead of using the stale 'targets' passed at initialization,
+  we now reference window.game.targets to always have the current target list.
+*/
 export function setupInput(canvas, player, targets, pauseCallback) {
   function getPointerPos(e) {
     const rect = canvas.getBoundingClientRect();
@@ -25,11 +33,13 @@ export function setupInput(canvas, player, targets, pauseCallback) {
   
   function pointerDown(e) {
     const pos = getPointerPos(e);
+    // Check if the pause/menu button was pressed.
     if (pos.x >= 20 && pos.x <= 100 && pos.y >= 20 && pos.y <= 50) {
       pauseCallback();
       return;
     }
     if (draggingPanda) return;
+    // Check if the player is being dragged.
     if (pos.x > player.x - player.width && pos.x < player.x + player.width &&
         pos.y > player.y - player.height - 50 && pos.y < player.y) {
       isDraggingPlayer = true;
@@ -37,11 +47,12 @@ export function setupInput(canvas, player, targets, pauseCallback) {
       e.preventDefault();
       return;
     }
-    for (let target of targets) {
+    // Use the current targets from window.game.targets instead of the stale parameter.
+    for (let target of window.game.targets) {
       if (target.type === "panda" && target.state === "free") {
         const dx = pos.x - target.x;
         const dy = pos.y - target.y;
-        if (Math.sqrt(dx*dx + dy*dy) < target.size/2) {
+        if (Math.sqrt(dx * dx + dy * dy) < target.size / 2) {
           draggingPanda = target;
           e.preventDefault();
           return;
@@ -55,7 +66,7 @@ export function setupInput(canvas, player, targets, pauseCallback) {
     const pos = getPointerPos(e);
     if (isDraggingPlayer) {
       player.x = pos.x - dragOffsetX;
-      player.x = clamp(player.x, player.width/2, canvas.width - player.width/2);
+      player.x = clamp(player.x, player.width / 2, canvas.width - player.width / 2);
     }
     if (draggingPanda) {
       draggingPanda.x = pos.x;
@@ -70,13 +81,13 @@ export function setupInput(canvas, player, targets, pauseCallback) {
   
   function shootProjectile(pos) {
     const dx = pos.x - player.x;
-    const dy = pos.y - (player.y - player.height/2);
-    const mag = Math.sqrt(dx*dx + dy*dy);
+    const dy = pos.y - (player.y - player.height / 2);
+    const mag = Math.sqrt(dx * dx + dy * dy);
     const speed = 500;
-    const vx = (dx/mag) * speed;
-    const vy = (dy/mag) * speed;
+    const vx = (dx / mag) * speed;
+    const vy = (dy / mag) * speed;
     if (onShootProjectile) {
-      onShootProjectile(player.x, player.y - player.height/2, vx, vy);
+      onShootProjectile(player.x, player.y - player.height / 2, vx, vy);
     }
   }
   
