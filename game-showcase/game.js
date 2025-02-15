@@ -48,18 +48,18 @@ function draw3DButton(ctx, x, y, width, height, text) {
 
 /* 
   winRestartHandler: When the user clicks on the restart button on the win screen,
-  this handler checks if the click occurred inside the buttonï¿½s bounds and, if so,
+  this handler checks if the click occurred inside the button’s bounds and, if so,
   calls the global restart function.
 */
 function winRestartHandler(e) {
   const rect = game.canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
-  // Restart button drawn at (canvas.width/2 - 50, canvas.height - 80) with width 100, height 40.
-  const btnX = game.canvas.width / 2 - 50;
-  const btnY = game.canvas.height - 80;
-  const btnW = 100;
-  const btnH = 40;
+  // Updated restart button coordinates: drawn at (canvas.width/2 - 70, canvas.height - 100) with width 140, height 50.
+  const btnX = game.canvas.width / 2 - 70;
+  const btnY = game.canvas.height - 100;
+  const btnW = 140;
+  const btnH = 50;
   if (x >= btnX && x <= btnX + btnW && y >= btnY && y <= btnY + btnH) {
     window.restartGame();
     game.canvas.removeEventListener("click", winRestartHandler);
@@ -68,8 +68,9 @@ function winRestartHandler(e) {
 }
 
 /* 
-  spawnExplosion: When a falling target (or heart collision) explodes, spawn particles.
-  Here, we spawn 10 particles for falling items.
+  spawnExplosion: When a falling target explodes, spawn particles.
+  Spawns 10 particles with random directions and speeds that last 800ms.
+  Particle radius increased to 10 for better visibility.
 */
 function spawnExplosion(x, y) {
   for (let i = 0; i < 10; i++) {
@@ -77,13 +78,14 @@ function spawnExplosion(x, y) {
     const speed = Math.random() * 100 + 50;
     const vx = Math.cos(angle) * speed;
     const vy = Math.sin(angle) * speed;
-    window.game.particles.push(new Particle(x, y, vx, vy, 500));
+    window.game.particles.push(new Particle(x, y, vx, vy, 800, 10));
   }
 }
 
 /* 
-  spawnHeartParticles: When two win screen pandas collide, spawn 5 heart particles.
-  Each particle lasts for 3000ms.
+  spawnHeartParticles: When two win screen pandas collide, spawn 5 red heart particles.
+  These particles are as big as a panda head (approximately 40px), emit in random directions,
+  and disappear after 2000ms. Added a stroke to the heart shape for better visibility.
 */
 function spawnHeartParticles(x, y) {
   for (let i = 0; i < 5; i++) {
@@ -91,7 +93,38 @@ function spawnHeartParticles(x, y) {
     const speed = Math.random() * 80 + 20;
     const vx = Math.cos(angle) * speed;
     const vy = Math.sin(angle) * speed;
-    window.game.particles.push(new Particle(x, y, vx, vy, 3000));
+    window.game.particles.push({
+      x: x,
+      y: y,
+      vx: vx,
+      vy: vy,
+      life: 2000,
+      maxLife: 2000,
+      update: function(deltaTime) {
+        this.x += this.vx * deltaTime / 1000;
+        this.y += this.vy * deltaTime / 1000;
+        this.life -= deltaTime;
+      },
+      draw: function(ctx) {
+        const alpha = this.life / this.maxLife;
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        // Draw a red solid heart with a classic shape (~40px in size)
+        const heartSize = 40;
+        ctx.moveTo(0, heartSize * 0.25);
+        ctx.bezierCurveTo(-heartSize * 0.5, -heartSize * 0.2, -heartSize * 0.5, heartSize * 0.6, 0, heartSize);
+        ctx.bezierCurveTo(heartSize * 0.5, heartSize * 0.6, heartSize * 0.5, -heartSize * 0.2, 0, heartSize * 0.25);
+        ctx.closePath();
+        ctx.fillStyle = "red";
+        ctx.fill();
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+      }
+    });
   }
 }
 
@@ -100,15 +133,49 @@ function spawnHeartParticles(x, y) {
   It clears the canvas, draws the background (using the sky color of the last level),
   then animates:
     - Falling targets (hearts and stars) that explode after their random explosionTime expires.
-    - Dancing pandas that move around and, upon colliding with each other, spawn 5 heart particles.
+    - Dancing pandas that move around and, upon colliding with each other, spawn 5 red heart particles.
+  It also displays a congratulatory message with the number of pandas rescued,
+  split into two lines with "Congratulations!" in a larger font.
   Finally, it draws a Restart button at the bottom.
 */
 function drawWinScreen() {
+  // Ensure winPandas and winFallingTargets are initialized if undefined or empty.
+  if (!game.winPandas || game.winPandas.length === 0) {
+    game.winPandas = [];
+    for (let i = 0; i < 5; i++) {
+      game.winPandas.push({
+        x: Math.random() * game.canvas.width,
+        y: Math.random() * game.canvas.height,
+        dx: (Math.random() - 0.5) * 2,
+        dy: (Math.random() - 0.5) * 2,
+        time: 0,
+        gender: Math.random() < 0.5 ? "female" : "male",
+        collisionCooldown: 0
+      });
+    }
+  }
+  if (!game.winFallingTargets || game.winFallingTargets.length === 0) {
+    game.winFallingTargets = [];
+    for (let i = 0; i < 15; i++) {
+      game.winFallingTargets.push(new WinFallingItem());
+    }
+  }
+  
   // Clear canvas.
   game.ctx.clearRect(0, 0, game.canvas.width, game.canvas.height);
   // Draw background.
   game.ctx.fillStyle = levels[game.currentLevelIndex].skyColor;
   game.ctx.fillRect(0, 0, game.canvas.width, game.canvas.height);
+  
+  // Draw congratulatory message split in two lines.
+  game.ctx.save();
+  game.ctx.font = "32px sans-serif";
+  game.ctx.fillStyle = "#fff";
+  game.ctx.textAlign = "center";
+  game.ctx.fillText("Congratulations!", game.canvas.width / 2, 60);
+  game.ctx.font = "28px sans-serif";
+  game.ctx.fillText(`You rescued ${game.rescuedPandas.length} pandas!`, game.canvas.width / 2, 100);
+  game.ctx.restore();
   
   // Process falling targets.
   game.winFallingTargets.forEach((item, index) => {
@@ -121,8 +188,7 @@ function drawWinScreen() {
     }
   });
   
-  // Process dancing pandas.
-  // First, update each panda's collision cooldown.
+  // Process dancing pandas and check for collisions.
   game.winPandas.forEach(panda => {
     if (panda.collisionCooldown === undefined) {
       panda.collisionCooldown = 0;
@@ -130,7 +196,6 @@ function drawWinScreen() {
       panda.collisionCooldown -= 16;
     }
   });
-  // Check for collisions between each pair.
   for (let i = 0; i < game.winPandas.length; i++) {
     for (let j = i + 1; j < game.winPandas.length; j++) {
       const p1 = game.winPandas[i];
@@ -138,8 +203,9 @@ function drawWinScreen() {
       const dx = p1.x - p2.x;
       const dy = p1.y - p2.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 40 && p1.collisionCooldown <= 0 && p2.collisionCooldown <= 0) {
-        // Collision detected: spawn 5 heart particles at collision point.
+      // Updated collision threshold to 80 for better detection.
+      if (dist < 80 && p1.collisionCooldown <= 0 && p2.collisionCooldown <= 0) {
+        // Spawn heart particles at collision point.
         spawnHeartParticles((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
         p1.collisionCooldown = 1000;
         p2.collisionCooldown = 1000;
@@ -147,7 +213,6 @@ function drawWinScreen() {
     }
   }
   
-  // Draw dancing pandas.
   game.winPandas.forEach(panda => {
     panda.x += panda.dx;
     panda.y += panda.dy;
@@ -157,17 +222,14 @@ function drawWinScreen() {
     drawPanda(game.ctx, panda.x, panda.y, 40, panda.time, panda.gender);
   });
   
-  // Draw Restart button.
-  draw3DButton(game.ctx, game.canvas.width / 2 - 50, game.canvas.height - 80, 100, 40, "Restart");
+  // Draw Restart button with updated coordinates.
+  draw3DButton(game.ctx, game.canvas.width / 2 - 70, game.canvas.height - 100, 140, 50, "Restart");
   if (!game.winRestartListenerAdded) {
     game.winRestartListenerAdded = true;
     game.canvas.addEventListener("click", winRestartHandler);
   }
 }
 
-/* 
-  Modified gameLoop: If game.state is "win", draw win screen.
-*/
 export function gameLoop(timestamp) {
   if (!game.lastTime) game.lastTime = timestamp;
   const deltaTime = timestamp - game.lastTime;
@@ -203,15 +265,15 @@ export function initGame(canvas, avatar) {
     particles: [],
     pointAnimations: [],
     logMessages: [],
-    rescuedPandas: [],
+    rescuedPandas: [], // To track rescued pandas.
     scrollOffset: 0,
     score: 0,
     spawnTimer: 0,
     lastTime: 0,
     currentLevelIndex: 0,
     // Will be initialized when win condition is reached.
-    winPandas: null,
-    winFallingTargets: null,
+    winPandas: [],
+    winFallingTargets: [],
     winRestartListenerAdded: false
   };
   window.game = game;
@@ -219,7 +281,7 @@ export function initGame(canvas, avatar) {
 }
 
 /* 
-  updateGame: Updates game objects, handles collisions, spawns new objects,
+  updateGame: Updates all game objects, handles collisions, spawns new objects,
   and triggers level progression. When 200 points are reached, a level is completed.
   Upon finishing the last level, win animations (dancing pandas and falling targets)
   are initialized.
@@ -421,9 +483,9 @@ export function updateGame(deltaTime) {
       }
     } else {
       // Win condition reached.
-      if (!game.winPandas) {
+      if (!game.winPandas || game.winPandas.length === 0) {
         game.winPandas = [];
-        // Create 5 dancing pandas with random positions and slight movement.
+        // Create 5 dancing pandas with random positions, slight movement, and collision cooldown.
         for (let i = 0; i < 5; i++) {
           game.winPandas.push({
             x: Math.random() * game.canvas.width,
@@ -432,11 +494,13 @@ export function updateGame(deltaTime) {
             dy: (Math.random() - 0.5) * 2,
             time: 0,
             gender: Math.random() < 0.5 ? "female" : "male",
-            collisionCooldown: 0 // For controlling collision explosions.
+            collisionCooldown: 0
           });
         }
-        // Create 15 falling targets (hearts or stars) for the win screen.
+      }
+      if (!game.winFallingTargets || game.winFallingTargets.length === 0) {
         game.winFallingTargets = [];
+        // Create 15 falling targets (hearts or stars) for the win screen.
         for (let i = 0; i < 15; i++) {
           game.winFallingTargets.push(new WinFallingItem());
         }
@@ -445,11 +509,6 @@ export function updateGame(deltaTime) {
     }
   }
 }
-
-/* 
-  spawnExplosion: When a falling target explodes, spawn particles.
-  (Already defined above.)
-*/
 
 /* 
   drawGame: Draws the current game state including sky, ground, objects, progress bar, and menu button.

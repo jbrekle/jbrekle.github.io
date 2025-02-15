@@ -57,3 +57,12 @@ window.changeAvatar = changeAvatar;
 window.restartGame = restartGame;
 
 startMenuAnimation();
+
+/* 
+  Debug option: Press 'w' key to win instantly.
+*/
+document.addEventListener("keydown", (e) => {
+  if (e.key === "w" && window.game) {
+    window.game.state = "win";
+  }
+});
