@@ -113,17 +113,17 @@ export class Player {
     // Improved hair drawing.
     ctx.save();
     if (this.avatar === "Mona") {
-      // Mona's hair: long, thick black hair starting at the top of her head and flowing down to her shoulders.
+      // Mona's hair: long, thick black hair that frames the head without covering the face.
       ctx.fillStyle = "#000";
       ctx.beginPath();
       // Start at the top left of the head.
       ctx.moveTo(headX - headRadius, headY - headRadius);
-      // Curve down along the left side to the shoulder area.
-      ctx.quadraticCurveTo(headX - headRadius, headY, headX - headRadius * 0.8, headY + headRadius * 0.8);
-      // Smooth bottom curve across the shoulders.
-      ctx.quadraticCurveTo(headX, headY + headRadius * 1.0, headX + headRadius * 0.8, headY + headRadius * 0.8);
-      // Curve up the right side to the top right of the head.
-      ctx.quadraticCurveTo(headX + headRadius, headY, headX + headRadius, headY - headRadius);
+      // Curve gently down along the left side, staying above the face.
+      ctx.quadraticCurveTo(headX - headRadius, headY - headRadius * 0.7, headX - headRadius * 0.8, headY - headRadius * 0.7);
+      // Curve across the top to form the hairline.
+      ctx.quadraticCurveTo(headX, headY - headRadius * 0.8, headX + headRadius * 0.8, headY - headRadius * 0.7);
+      // Curve gently up along the right side.
+      ctx.quadraticCurveTo(headX + headRadius, headY - headRadius * 0.7, headX + headRadius, headY - headRadius);
       ctx.closePath();
       ctx.fill();
     } else {

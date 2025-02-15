@@ -28,6 +28,7 @@ export function drawHeart(ctx, x, y, size, label) {
   ctx.closePath();
   ctx.fillStyle = "rgba(255,255,255,0.5)";
   ctx.fill();
+  // Remove inner white circle that was previously drawn.
   ctx.fillStyle = "#fff";
   ctx.font = `${size * 0.4}px sans-serif`;
   ctx.textAlign = "center";
@@ -39,6 +40,7 @@ export function drawHeart(ctx, x, y, size, label) {
 /* 
   drawStar: Draws a detailed star with multiple spikes.
   It uses a radial gradient for a 3D effect and displays a label at its center.
+  (Removed the inner white circle that was previously drawn.)
 */
 export function drawStar(ctx, x, y, size, label) {
   ctx.save();
@@ -68,10 +70,7 @@ export function drawStar(ctx, x, y, size, label) {
   ctx.strokeStyle = "#c79100";
   ctx.lineWidth = 2;
   ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(0, 0, innerRadius * 0.3, 0, Math.PI * 2);
-  ctx.fillStyle = "#fff";
-  ctx.fill();
+  // Removed inner white circle drawing.
   ctx.fillStyle = "#000";
   ctx.font = `${size * 0.3}px sans-serif`;
   ctx.textAlign = "center";
@@ -314,11 +313,13 @@ export class Target {
         this.y = (1 - t) * (bp.y - 20) + t * targetY;
         if (t >= 1) {
           this.state = "collected";
-          // Award points and trigger backpack jiggle, and also show a point increase indication.
+          // Award points and trigger backpack jiggle, and show a point increase indication.
           addPointAnimation("+" + this.scoreValue, window.game.player.backpack.x + window.game.player.backpack.width / 2, window.game.player.backpack.y, window.game.pointAnimations);
           window.game.score += this.scoreValue;
           addLogMessage(`${window.game.player.avatar} rescued a panda`, window.game.logMessages);
           window.game.player.backpackJiggleTime = 500;
+          // Track rescued pandas.
+          window.game.rescuedPandas.push(this);
         }
       }
     }
@@ -349,14 +350,14 @@ export class Target {
   Decoration: Draws environmental elements.
   Detailed rework: Each decoration is built from multiple shapes.
   For City: 
-    - Building: main body, windows (grid), door, roof.
-    - Lamp: base, pole, lamp head, light rays.
+    - Building: main body, roof, windows grid, and door.
+    - Lamp: base, pole, lamp head, and light rays.
   For Forest:
-    - Tree: trunk, branches, leaves cluster, roots.
-    - Bush: base, overlapping leaf circles.
+    - Tree: trunk, branches, overlapping foliage circles, and roots.
+    - Bush: multiple overlapping leaf circles.
   For Space:
-    - Satellite: main body, solar panels, antenna, thrusters.
-    - Comet: head, tail gradient, and particle trail.
+    - Satellite: main body with windows, solar panels, antenna, and thrusters.
+    - Comet: head, tail gradient, and debris particles.
 */
 export class Decoration {
   constructor(type, x, y, levelName) {
@@ -377,10 +378,10 @@ export class Decoration {
     ctx.scale(scale, scale);
     if (this.levelName === "City") {
       if (this.type === "building") {
-        // Building base: a rectangle.
+        // Building base.
         ctx.fillStyle = "#666";
         ctx.fillRect(-20, -40, 40, 80);
-        // Roof: a triangle on top.
+        // Roof.
         ctx.beginPath();
         ctx.moveTo(-22, -40);
         ctx.lineTo(0, -60);
@@ -388,7 +389,7 @@ export class Decoration {
         ctx.closePath();
         ctx.fillStyle = "#444";
         ctx.fill();
-        // Windows: grid of small rectangles.
+        // Windows grid.
         ctx.fillStyle = "#ffd700";
         for (let y = -35; y < 40; y += 15) {
           for (let x = -15; x < 15; x += 15) {
@@ -405,7 +406,7 @@ export class Decoration {
         // Pole.
         ctx.fillStyle = "#888";
         ctx.fillRect(-2, -30, 4, 30);
-        // Lamp head: a semi-circle.
+        // Lamp head (semi-circle).
         ctx.beginPath();
         ctx.arc(0, -30, 8, Math.PI, 0);
         ctx.fillStyle = "#ffcc00";
@@ -425,7 +426,7 @@ export class Decoration {
         // Trunk.
         ctx.fillStyle = "#8B4513";
         ctx.fillRect(-5, 0, 10, 30);
-        // Branches (3 simple lines).
+        // Branches.
         ctx.strokeStyle = "#8B4513";
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -434,7 +435,7 @@ export class Decoration {
         ctx.moveTo(0, 15);
         ctx.lineTo(10, 5);
         ctx.stroke();
-        // Foliage: several overlapping circles.
+        // Foliage (overlapping circles).
         ctx.fillStyle = "#228B22";
         for (let i = -15; i <= 15; i += 10) {
           ctx.beginPath();
@@ -442,7 +443,7 @@ export class Decoration {
           ctx.fill();
         }
       } else if (this.type === "bush") {
-        // Multiple overlapping circles for a bush.
+        // Overlapping circles.
         ctx.fillStyle = "#2E8B57";
         for (let i = -10; i <= 10; i += 10) {
           for (let j = -10; j <= 10; j += 10) {
@@ -457,7 +458,7 @@ export class Decoration {
         // Main body.
         ctx.fillStyle = "#ccc";
         ctx.fillRect(-10, -10, 20, 20);
-        // Detail: small windows.
+        // Windows detail.
         ctx.fillStyle = "#999";
         for (let i = -8; i <= 8; i += 8) {
           for (let j = -8; j <= 8; j += 8) {
@@ -475,7 +476,7 @@ export class Decoration {
         ctx.strokeStyle = "#666";
         ctx.lineWidth = 2;
         ctx.stroke();
-        // Thruster details.
+        // Thrusters.
         ctx.beginPath();
         ctx.arc(0, 10, 3, 0, Math.PI * 2);
         ctx.fillStyle = "orange";
@@ -486,7 +487,7 @@ export class Decoration {
         ctx.beginPath();
         ctx.arc(0, 0, 10, 0, Math.PI * 2);
         ctx.fill();
-        // Tail: gradient from white to transparent.
+        // Tail: gradient.
         let grad = ctx.createLinearGradient(0, 0, -30, 10);
         grad.addColorStop(0, "rgba(255,255,255,0.8)");
         grad.addColorStop(1, "rgba(255,255,255,0)");
@@ -496,7 +497,7 @@ export class Decoration {
         ctx.moveTo(0, 0);
         ctx.lineTo(-30, 10);
         ctx.stroke();
-        // Small debris particles.
+        // Debris particles.
         ctx.fillStyle = "#ddd";
         for (let i = 0; i < 3; i++) {
           ctx.beginPath();
@@ -753,15 +754,17 @@ export class Obstacle {
 
 /* 
   Particle: Represents a small particle used for effects such as explosions.
+  Added an optional radius parameter (default 3) so explosion particles can be made larger.
 */
 export class Particle {
-  constructor(x, y, vx, vy, life) {
+  constructor(x, y, vx, vy, life, radius = 3) {
     this.x = x;
     this.y = y;
     this.vx = vx;
     this.vy = vy;
     this.life = life;
     this.maxLife = life;
+    this.radius = radius;
   }
   update(deltaTime) {
     this.x += this.vx * deltaTime / 1000;
@@ -773,7 +776,7 @@ export class Particle {
       const alpha = this.life / this.maxLife;
       ctx.fillStyle = `rgba(255,215,0,${alpha})`;
       ctx.beginPath();
-      ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
       ctx.fill();
     }
   }
@@ -878,7 +881,7 @@ export class WinFallingItem {
   }
   draw(ctx) {
     ctx.save();
-    ctx.globalAlpha = this.alpha; // Can be kept constant or faded if desired.
+    ctx.globalAlpha = this.alpha;
     if (this.type === "heart") {
       drawHeart(ctx, this.x, this.y, 30, this.label);
     } else {
