@@ -1,12 +1,10 @@
-// player.js – Improved Player class with responsive sizing and more detailed, 3D-ish drawing
-
 import { clamp } from './util.js';
 import { drawPanda } from './entities.js';
 
 export class Player {
   constructor(avatar) {
     this.avatar = avatar; // "Mona" or "Jonas"
-    // Set initial default sizes; will be recalculated in update()
+    // Initial default sizes (will be recalculated in update)
     this.width = 100;
     this.height = 160;
     this.x = window.innerWidth / 2;
@@ -14,34 +12,25 @@ export class Player {
     this.speed = 400;
     this.walkTime = 0;
     this.shakeOffset = { x: 0, y: 0 };
-    this.backpack = {
-      x: this.x - 0.3 * this.width,
-      y: this.y - 0.65 * this.height,
-      width: 0.6 * this.width,
-      height: 0.4 * this.height,
-    };
+    this.backpack = { x: 0, y: 0, width: 0, height: 0 };
     this.backpackJiggleTime = 0;
   }
   update(deltaTime) {
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    // Determine a base size based on the smaller screen dimension with a minimum of 100px.
-    const baseSize = Math.max(100, Math.min(screenWidth, screenHeight) * 0.1);
+    // Use one third the base size derived from the smaller screen dimension
+    const baseSize = (Math.max(100, Math.min(screenWidth, screenHeight) * 0.1)) / 3;
     this.width = baseSize;
     this.height = baseSize * 1.6;
     this.y = screenHeight - 10;
     this.x = clamp(this.x, this.width / 2, screenWidth - this.width / 2);
     this.walkTime += deltaTime;
     // Calculate backpack dimensions once
-    const bpX = this.x - 0.3 * this.width;
-    const bpY = this.y - 0.65 * this.height;
-    const bpW = 0.6 * this.width;
-    const bpH = 0.4 * this.height;
-    this.backpack.x = bpX;
-    this.backpack.y = bpY;
-    this.backpack.width = bpW;
-    this.backpack.height = bpH;
-    // Apply shake effect on collision
+    this.backpack.x = this.x - 0.3 * this.width;
+    this.backpack.y = this.y - 0.65 * this.height;
+    this.backpack.width = 0.6 * this.width;
+    this.backpack.height = 0.4 * this.height;
+    // Collision shake effect
     if (window.playerShakeTime > 0) {
       window.playerShakeTime -= deltaTime;
       this.shakeOffset.x = (Math.random() - 0.5) * 10;
@@ -58,7 +47,7 @@ export class Player {
     ctx.save();
     ctx.translate(this.shakeOffset.x, this.shakeOffset.y);
     
-    // Draw a rounded, 3D-ish body using an ellipse and gradient.
+    // Draw a rounded 3D-ish body using an ellipse and gradient.
     const bodyCenterX = this.x;
     const bodyCenterY = this.y - this.height / 2;
     const bodyRadiusX = this.width / 2;
@@ -74,7 +63,7 @@ export class Player {
     ctx.lineWidth = 2;
     ctx.stroke();
     
-    // Draw arms with smooth curves
+    // Draw arms with smooth curves and slight swinging animation.
     const armLength = this.width * 0.5;
     const armOffset = Math.sin(this.walkTime / 150) * 8;
     ctx.strokeStyle = "#ffe0bd";
@@ -88,28 +77,27 @@ export class Player {
     ctx.quadraticCurveTo(this.x + bodyRadiusX + armLength * 0.3, bodyCenterY - armOffset, this.x + bodyRadiusX + armLength, bodyCenterY + armLength * 0.2);
     ctx.stroke();
     
-    // Draw legs as rounded rectangles
+    // Draw legs as rounded rectangles with slight movement.
     const legWidth = this.width * 0.15;
     const legHeight = this.height * 0.3;
+    const legMovement = Math.abs(Math.sin(this.walkTime / 150)) * 5;
     ctx.fillStyle = "#000";
-    // Left leg
     ctx.beginPath();
-    ctx.moveTo(this.x - legWidth - 5, this.y - legHeight);
-    ctx.lineTo(this.x - legWidth - 5, this.y);
-    ctx.lineTo(this.x - 5, this.y);
-    ctx.lineTo(this.x - 5, this.y - legHeight);
+    ctx.moveTo(this.x - legWidth - 5, this.y - legHeight + legMovement);
+    ctx.lineTo(this.x - legWidth - 5, this.y + legMovement);
+    ctx.lineTo(this.x - 5, this.y + legMovement);
+    ctx.lineTo(this.x - 5, this.y - legHeight + legMovement);
     ctx.closePath();
     ctx.fill();
-    // Right leg
     ctx.beginPath();
-    ctx.moveTo(this.x + 5, this.y - legHeight);
-    ctx.lineTo(this.x + 5, this.y);
-    ctx.lineTo(this.x + legWidth + 5, this.y);
-    ctx.lineTo(this.x + legWidth + 5, this.y - legHeight);
+    ctx.moveTo(this.x + 5, this.y - legHeight + legMovement);
+    ctx.lineTo(this.x + 5, this.y + legMovement);
+    ctx.lineTo(this.x + legWidth + 5, this.y + legMovement);
+    ctx.lineTo(this.x + legWidth + 5, this.y - legHeight + legMovement);
     ctx.closePath();
     ctx.fill();
     
-    // Draw head with 3D gradient and round shape
+    // Draw head with 3D gradient.
     const headX = this.x;
     const headY = this.y - this.height - bodyRadiusX * 0.5;
     const headRadius = bodyRadiusX * 1.2;
@@ -123,7 +111,7 @@ export class Player {
     ctx.strokeStyle = "#000";
     ctx.stroke();
     
-    // Eyes with glossy effect
+    // Draw eyes with glossy effect.
     const eyeOffsetX = headRadius * 0.3;
     const eyeOffsetY = -headRadius * 0.1;
     const eyeRadius = headRadius * 0.2;
@@ -138,13 +126,13 @@ export class Player {
     ctx.arc(headX + eyeOffsetX - 2, headY + eyeOffsetY - 2, eyeRadius * 0.5, 0, Math.PI * 2);
     ctx.fill();
     
-    // Nose and mouth using smooth curves
+    // Draw nose and mouth.
     ctx.beginPath();
     ctx.moveTo(headX - headRadius * 0.1, headY + headRadius * 0.1);
     ctx.quadraticCurveTo(headX, headY + headRadius * 0.2, headX + headRadius * 0.1, headY + headRadius * 0.1);
     ctx.stroke();
     
-    // Hair on top – different style based on avatar
+    // Draw hair (different for Mona vs Jonas).
     ctx.save();
     if (this.avatar === "Mona") {
       ctx.strokeStyle = "#000";
@@ -161,7 +149,7 @@ export class Player {
     }
     ctx.restore();
     
-    // Backpack on top; apply jiggle effect
+    // Draw backpack on top; animate jiggle and ensure it appears above the player.
     ctx.save();
     let bpOffset = 0;
     if (this.backpackJiggleTime > 0) {
@@ -183,6 +171,7 @@ export class Player {
     ctx.strokeStyle = "#fff";
     ctx.stroke();
     ctx.restore();
+    
     ctx.restore();
   }
 }

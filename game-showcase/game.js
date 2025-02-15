@@ -1,11 +1,8 @@
-// game.js – Main game loop, update/draw, and initialization
-
 import { getScaleForY, addLogMessage, addPointAnimation } from './util.js';
 import { levels, initLevels } from './levels.js';
 import { Projectile, Target, Obstacle, Particle, Cloud, Bird, SpaceStar } from './entities.js';
 import { Player } from './player.js';
 
-// Simple collision helper
 function rectCircleColliding(rx, ry, rw, rh, cx, cy, cr) {
   const closestX = Math.min(Math.max(cx, rx), rx + rw);
   const closestY = Math.min(Math.max(cy, ry), ry + rh);
@@ -14,10 +11,8 @@ function rectCircleColliding(rx, ry, rw, rh, cx, cy, cr) {
   return (dx * dx + dy * dy) < (cr * cr);
 }
 
-// Local pause flag
 let paused = false;
 
-// Helper: draw 3D-style button
 function draw3DButton(ctx, x, y, width, height, text) {
   ctx.save();
   const grad = ctx.createLinearGradient(x, y, x, y + height);
@@ -40,7 +35,6 @@ function draw3DButton(ctx, x, y, width, height, text) {
   ctx.restore();
 }
 
-// Helper: draw rounded rectangle
 function drawRoundedRect(ctx, x, y, width, height, radius) {
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
@@ -158,7 +152,7 @@ export function updateGame(deltaTime) {
     }
   }
   
-  // Player-body collisions (remove this score counter text per instructions)
+  // Player-body collision with hearts/stars
   game.targets.forEach(target => {
     if ((target.type === "heart" || target.type === "star") && !target.hit) {
       if (rectCircleColliding(game.player.x - game.player.width/2, game.player.y - game.player.height, game.player.width, game.player.height,
@@ -171,7 +165,7 @@ export function updateGame(deltaTime) {
     }
   });
   
-  // Panda rescue (dragged into backpack)
+  // Panda rescue (if panda is free and inside backpack, start collection animation)
   game.targets.forEach(target => {
     if (target.type === "panda" && target.state === "free") {
       const bp = game.player.backpack;
@@ -182,6 +176,8 @@ export function updateGame(deltaTime) {
       }
     }
   });
+  
+  // Panda collection animation handled in Target.update
   
   // Obstacle collision (body only)
   game.obstacles.forEach((obs, index) => {
@@ -242,8 +238,9 @@ export function updateGame(deltaTime) {
   }
   
   // Level progression.
-  if (game.score >= 200) {
+  if (game.score >= levels[game.currentLevelIndex].scrollSpeed * 2) {
     if (game.currentLevelIndex < levels.length - 1) {
+      game.score = 0; // reset score for new level
       game.currentLevelIndex++;
       game.targets = [];
       game.obstacles = [];
@@ -267,7 +264,6 @@ export function updateGame(deltaTime) {
       }
     } else {
       game.state = "win";
-      // Win screen will be triggered externally.
     }
   }
 }
@@ -314,11 +310,12 @@ export function drawGame() {
   });
   game.ctx.restore();
   game.player.draw(game.ctx);
-  // Removed the score counter label above the progress bar per instructions.
+  // Draw progress bar (score label removed)
   game.ctx.save();
   const progressBarWidth = Math.max(100, game.canvas.width * 0.5);
-  const progress = (game.score - (game.currentLevelIndex === 0 ? 0 : levels[game.currentLevelIndex - 1].scrollSpeed)) /
+  const rawProgress = (game.score - (game.currentLevelIndex === 0 ? 0 : levels[game.currentLevelIndex - 1].scrollSpeed)) /
                      (levels[game.currentLevelIndex].scrollSpeed - (game.currentLevelIndex === 0 ? 0 : levels[game.currentLevelIndex - 1].scrollSpeed));
+  const progress = Math.min(1, rawProgress);
   const barX = game.canvas.width - progressBarWidth - 20;
   const barY = 50;
   const barHeight = 20;
@@ -339,6 +336,19 @@ export function drawGame() {
   game.ctx.restore();
 }
 
+function drawRoundedRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
 
 export function gameLoop(timestamp) {
   if (!game.lastTime) game.lastTime = timestamp;

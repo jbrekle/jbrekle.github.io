@@ -5,7 +5,6 @@ import { levels } from './levels.js';
 export function drawHeart(ctx, x, y, size, label) {
   ctx.save();
   ctx.translate(x, y);
-  // Draw heart outline with two lobes
   ctx.beginPath();
   ctx.moveTo(0, size * 0.3);
   ctx.bezierCurveTo(-size, -size * 0.2, -size * 1.1, size * 0.8, 0, size * 1.3);
@@ -19,8 +18,6 @@ export function drawHeart(ctx, x, y, size, label) {
   ctx.strokeStyle = "#990033";
   ctx.lineWidth = 2;
   ctx.stroke();
-  
-  // Inner highlight
   ctx.beginPath();
   ctx.moveTo(0, size * 0.45);
   ctx.bezierCurveTo(-size * 0.3, size * 0.3, -size * 0.2, size * 0.8, 0, size * 0.9);
@@ -28,8 +25,6 @@ export function drawHeart(ctx, x, y, size, label) {
   ctx.closePath();
   ctx.fillStyle = "rgba(255,255,255,0.5)";
   ctx.fill();
-  
-  // Label in the heart
   ctx.fillStyle = "#fff";
   ctx.font = `${size * 0.4}px sans-serif`;
   ctx.textAlign = "center";
@@ -67,12 +62,10 @@ export function drawStar(ctx, x, y, size, label) {
   ctx.strokeStyle = "#c79100";
   ctx.lineWidth = 2;
   ctx.stroke();
-  // Inner circle detail
   ctx.beginPath();
   ctx.arc(0, 0, innerRadius * 0.3, 0, Math.PI * 2);
   ctx.fillStyle = "#fff";
   ctx.fill();
-  // Label in the center
   ctx.fillStyle = "#000";
   ctx.font = `${size * 0.3}px sans-serif`;
   ctx.textAlign = "center";
@@ -85,23 +78,19 @@ export function drawStar(ctx, x, y, size, label) {
 export function drawPanda(ctx, x, y, size, time, gender = "male") {
   ctx.save();
   ctx.translate(x, y);
-  // Body
   ctx.beginPath();
   ctx.ellipse(0, size * 0.3, size, size * 0.8, 0, 0, Math.PI * 2);
   ctx.fillStyle = "#fff";
   ctx.fill();
   ctx.strokeStyle = "#000";
   ctx.stroke();
-  // Head
   ctx.beginPath();
   ctx.arc(0, -size * 0.2, size * 0.6, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
-  // Ears
   const earOffsetX = size * 0.4;
   const earOffsetY = -size * 0.5;
   const earRadius = size * 0.2;
-  // Left ear
   ctx.beginPath();
   ctx.arc(-earOffsetX, earOffsetY, earRadius, 0, Math.PI * 2);
   ctx.fillStyle = "#000";
@@ -110,7 +99,6 @@ export function drawPanda(ctx, x, y, size, time, gender = "male") {
   ctx.arc(-earOffsetX, earOffsetY, earRadius * 0.6, 0, Math.PI * 2);
   ctx.fillStyle = "#fff";
   ctx.fill();
-  // Right ear
   ctx.beginPath();
   ctx.arc(earOffsetX, earOffsetY, earRadius, 0, Math.PI * 2);
   ctx.fillStyle = "#000";
@@ -119,7 +107,6 @@ export function drawPanda(ctx, x, y, size, time, gender = "male") {
   ctx.arc(earOffsetX, earOffsetY, earRadius * 0.6, 0, Math.PI * 2);
   ctx.fillStyle = "#fff";
   ctx.fill();
-  // Eyes with shine
   const eyeOffsetX = size * 0.25;
   const eyeOffsetY = -size * 0.2;
   const eyeRadius = size * 0.15;
@@ -135,7 +122,6 @@ export function drawPanda(ctx, x, y, size, time, gender = "male") {
   ctx.beginPath();
   ctx.arc(eyeOffsetX - 2, eyeOffsetY - 2, eyeRadius * 0.5, 0, Math.PI * 2);
   ctx.fill();
-  // Nose and mouth
   ctx.beginPath();
   ctx.arc(0, -size * 0.05, size * 0.1, 0, Math.PI, false);
   ctx.fillStyle = "#000";
@@ -144,7 +130,6 @@ export function drawPanda(ctx, x, y, size, time, gender = "male") {
   ctx.moveTo(-size * 0.1, 0);
   ctx.quadraticCurveTo(0, size * 0.1, size * 0.1, 0);
   ctx.stroke();
-  // Gender adornment (bow for female)
   if (gender === "female") {
     ctx.beginPath();
     ctx.moveTo(0, -size * 0.6);
@@ -156,7 +141,6 @@ export function drawPanda(ctx, x, y, size, time, gender = "male") {
     ctx.fill();
     ctx.stroke();
   }
-  // Limbs with animated offset
   const limbOffset = Math.sin(time / 200) * size * 0.1;
   ctx.fillStyle = "#000";
   ctx.beginPath();
@@ -178,7 +162,6 @@ export function drawPanda(ctx, x, y, size, time, gender = "male") {
 export function drawRocket(ctx, x, y, size) {
   ctx.save();
   ctx.translate(x, y);
-  // Rocket Body
   ctx.beginPath();
   ctx.moveTo(0, -size * 0.8);
   ctx.lineTo(size * 0.3, size * 0.4);
@@ -191,8 +174,6 @@ export function drawRocket(ctx, x, y, size) {
   ctx.fill();
   ctx.strokeStyle = "#555";
   ctx.stroke();
-  
-  // Rocket Tip
   ctx.beginPath();
   ctx.moveTo(0, -size * 0.8);
   ctx.lineTo(size * 0.15, -size * 0.6);
@@ -201,8 +182,6 @@ export function drawRocket(ctx, x, y, size) {
   ctx.fillStyle = "#ff4444";
   ctx.fill();
   ctx.stroke();
-  
-  // Left Fin
   ctx.beginPath();
   ctx.moveTo(-size * 0.3, size * 0.4);
   ctx.lineTo(-size * 0.45, size * 0.2);
@@ -211,8 +190,6 @@ export function drawRocket(ctx, x, y, size) {
   ctx.fillStyle = "#ffcc00";
   ctx.fill();
   ctx.stroke();
-  
-  // Right Fin
   ctx.beginPath();
   ctx.moveTo(size * 0.3, size * 0.4);
   ctx.lineTo(size * 0.45, size * 0.2);
@@ -221,8 +198,6 @@ export function drawRocket(ctx, x, y, size) {
   ctx.fillStyle = "#ffcc00";
   ctx.fill();
   ctx.stroke();
-  
-  // Exhaust Fire
   ctx.beginPath();
   ctx.moveTo(-size * 0.15, size * 0.4);
   ctx.bezierCurveTo(-size * 0.15, size * 0.7, size * 0.15, size * 0.7, size * 0.15, size * 0.4);
@@ -231,7 +206,6 @@ export function drawRocket(ctx, x, y, size) {
   ctx.fill();
   ctx.strokeStyle = "red";
   ctx.stroke();
-  
   ctx.restore();
 }
 
@@ -287,7 +261,7 @@ export class Target {
     } else if (type === "panda") {
       this.scoreValue = 25;
       this.gender = Math.random() < 0.5 ? "female" : "male";
-      this.state = "free";
+      this.state = "free"; // "free", "beingCollected", "collected"
       this.animationTime = 0;
       this.collectionTimer = undefined;
     }
@@ -299,6 +273,26 @@ export class Target {
     if (this.hit) this.effectTime += deltaTime;
     if (this.type === "panda" && this.state === "free") {
       this.animationTime += deltaTime;
+    }
+    // Panda collection animation: slide from above backpack to its center.
+    if (this.type === "panda" && this.state === "beingCollected") {
+      if (this.collectionTimer === undefined) {
+        this.collectionTimer = 0;
+      } else {
+        this.collectionTimer += deltaTime;
+        const t = Math.min(this.collectionTimer / 500, 1);
+        const bp = window.game.player.backpack;
+        const targetY = bp.y + bp.height/2;
+        this.y = (1 - t) * (bp.y - 20) + t * targetY;
+        if (t >= 1) {
+          this.state = "collected";
+          // Award points and trigger backpack jiggle.
+          addPointAnimation("+" + this.scoreValue, window.game.player.backpack.x + window.game.player.backpack.width/2, window.game.player.backpack.y, window.game.pointAnimations);
+          window.game.score += this.scoreValue;
+          addLogMessage(`${window.game.player.avatar} rescued a panda`, window.game.logMessages);
+          window.game.player.backpackJiggleTime = 500;
+        }
+      }
     }
   }
   draw(ctx, scaleFunc) {
@@ -409,7 +403,6 @@ export class Obstacle {
   update(deltaTime, scrollSpeed) {
     this.y += scrollSpeed * deltaTime / 1000;
   }
-  // Now accepts levelName as a parameter.
   draw(ctx, levelName) {
     ctx.save();
     const scale = getScaleForY(this.y, window.innerHeight);
@@ -417,7 +410,6 @@ export class Obstacle {
     ctx.scale(scale, scale);
     if (levelName === "City") {
       if (this.type === "car") {
-        // Detailed car: body, windows, wheels
         ctx.beginPath();
         ctx.moveTo(-30, -10);
         ctx.lineTo(30, -10);
@@ -593,7 +585,7 @@ export class Bird {
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    const wing = Math.sin(this.wingTime/200) * 5;
+    const wing = Math.sin(this.wingTime / 200) * 5;
     ctx.moveTo(this.x, this.y);
     ctx.lineTo(this.x - 10, this.y - wing);
     ctx.moveTo(this.x, this.y);
@@ -610,14 +602,14 @@ export class SpaceStar {
     this.alpha = Math.random();
   }
   update(deltaTime) {
-    this.alpha += (Math.random()-0.5)*0.01;
+    this.alpha += (Math.random() - 0.5) * 0.01;
     this.alpha = Math.max(0.3, Math.min(1, this.alpha));
   }
   draw(ctx) {
     ctx.save();
     ctx.fillStyle = `rgba(255,255,255,${this.alpha})`;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, 2, 0, Math.PI*2);
+    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   }
@@ -648,4 +640,3 @@ export class WinFallingItem {
     ctx.restore();
   }
 }
-

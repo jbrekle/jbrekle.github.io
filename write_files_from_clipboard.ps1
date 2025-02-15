@@ -25,14 +25,15 @@ $allText = Get-Clipboard -Raw
 $lines = $allText -split "`r?`n"
 
 # 3) Regex für Start und Ende definieren
-$startPattern = '^// content-start Filename:\s*(.+)$'
-$endPattern   = '^// content-end Filename:\s*(.+)$'
+$startPattern = '^\s*// content-start Filename:\s*(.+)$'
+$endPattern   = '^\s*// content-end Filename:\s*(.+)$'
 
 # 4) Variablen zum Sammeln der Daten
 $currentFile = $null
 $contentLines = @()
 
 foreach ($line in $lines) {
+
     #Write-Output "line $line"
     # Prüfen, ob es sich um einen content-start handelt
     if ($line -match $startPattern) {
@@ -40,7 +41,7 @@ foreach ($line in $lines) {
         # Dateiname aus dem Match holen
 
         $currentFile = $Matches[1].Trim()
-        #Write-Output "currentFile $currentFile"
+        Write-Output "currentFile $currentFile"
         # Inhalt neu anfangen
         $contentLines = @()
         continue
@@ -54,8 +55,8 @@ foreach ($line in $lines) {
         # Nur wenn der end-Dateiname zum aktuellen passt, schreiben wir die Datei
         if ($currentFile -and ($endFile -eq $currentFile)) {
             # Datei erstellen / überschreiben
-            #Set-Content -Path $currentFile -Value $contentLines
-            Write-Output "would write $contentLines"
+            Set-Content -Path $currentFile -Value $contentLines
+            #Write-Output "would write $contentLines"
             Write-Output "wrote $currentFile"
         } else {
             Write-Output "end file name mismatch currentFile $currentFile endFile $endFile"
@@ -70,8 +71,10 @@ foreach ($line in $lines) {
     # Befinden wir uns innerhalb einer content-start ... content-end Sektion?
     if ($currentFile) {
         #Write-Output "^ is a content line"
-        # Diese Zeile gehört zum Inhalt der aktuellen Datei
-        $contentLines += $line
+        # chatgpt has a filetype indicator, we ignore it
+        if(-not ($line.StartsWith("``````"))){
+            $contentLines += $line
+        }
     }
 }
 

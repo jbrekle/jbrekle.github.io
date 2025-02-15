@@ -10,14 +10,21 @@ function updateMenuAnimation(dt) {
 }
 function drawMenuAnimation(ctx, canvas, selectedAvatar) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // Draw the player in the middle
+  // For the start screen, show an enlarged player (scaled up 3x)
   const tempPlayer = new Player(selectedAvatar || "Mona");
+  tempPlayer.width *= 3;
+  tempPlayer.height *= 3;
   tempPlayer.x = canvas.width / 2;
   tempPlayer.y = canvas.height / 2;
+  // Recalculate backpack based on new dimensions
+  tempPlayer.backpack.x = tempPlayer.x - 0.3 * tempPlayer.width;
+  tempPlayer.backpack.y = tempPlayer.y - 0.65 * tempPlayer.height;
+  tempPlayer.backpack.width = 0.6 * tempPlayer.width;
+  tempPlayer.backpack.height = 0.4 * tempPlayer.height;
   tempPlayer.walkTime = menuAnimTime;
   tempPlayer.update(0);
   tempPlayer.draw(ctx);
-  // Draw a walking panda on the left (at 25% width) and right (75% width)
+  // Draw a walking panda on the left (25% width) and right (75% width)
   ctx.save();
   ctx.translate(canvas.width * 0.25, canvas.height / 2);
   drawPanda(ctx, 0, 0, 40, menuAnimTime, "female");
