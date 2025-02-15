@@ -1,11 +1,14 @@
-// game.js – Main game loop, update/draw, and initialization
-
-import { getScaleForY, addLogMessage, addPointAnimation } from './util.js';
+import { getScaleForY, addLogMessage, addPointAnimation, drawRoundedRect } from './util.js';
 import { levels, initLevels } from './levels.js';
-import { Projectile, Target, Obstacle, Particle, Cloud, Bird, SpaceStar } from './entities.js';
+import { Projectile, Target, Obstacle, Particle, Cloud, Bird, SpaceStar, WinFallingItem } from './entities.js';
 import { Player } from './player.js';
+import { drawPanda } from './entities.js';
 
-// Simple collision helper
+/* 
+  Helper function for circle-rectangle collision.
+  It calculates the closest point on the rectangle to the circle center
+  and checks if the distance is less than the circle's radius.
+*/
 function rectCircleColliding(rx, ry, rw, rh, cx, cy, cr) {
   const closestX = Math.min(Math.max(cx, rx), rx + rw);
   const closestY = Math.min(Math.max(cy, ry), ry + rh);
@@ -14,10 +17,12 @@ function rectCircleColliding(rx, ry, rw, rh, cx, cy, cr) {
   return (dx * dx + dy * dy) < (cr * cr);
 }
 
-// Local pause flag
 let paused = false;
 
-// Helper: draw 3D-style button
+/* 
+  draw3DButton draws a button with a 3D effect.
+  It uses a linear gradient, shadow, and a rounded rectangle (imported from util.js).
+*/
 function draw3DButton(ctx, x, y, width, height, text) {
   ctx.save();
   const grad = ctx.createLinearGradient(x, y, x, y + height);
@@ -26,6 +31,7 @@ function draw3DButton(ctx, x, y, width, height, text) {
   ctx.fillStyle = grad;
   ctx.shadowColor = "rgba(0,0,0,0.3)";
   ctx.shadowBlur = 4;
+  // Draw button background using rounded rectangle.
   drawRoundedRect(ctx, x, y, width, height, 8);
   ctx.fill();
   ctx.strokeStyle = "#fff";
@@ -40,19 +46,142 @@ function draw3DButton(ctx, x, y, width, height, text) {
   ctx.restore();
 }
 
-// Helper: draw rounded rectangle
-function drawRoundedRect(ctx, x, y, width, height, radius) {
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + width - radius, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-  ctx.lineTo(x + width, y + height - radius);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-  ctx.lineTo(x + radius, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
-  ctx.closePath();
+/* 
+  winRestartHandler: When the user clicks on the restart button on the win screen,
+  this handler checks if the click occurred inside the button�s bounds and, if so,
+  calls the global restart function.
+*/
+function winRestartHandler(e) {
+  const rect = game.canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  // Restart button drawn at (canvas.width/2 - 50, canvas.height - 80) with width 100, height 40.
+  const btnX = game.canvas.width / 2 - 50;
+  const btnY = game.canvas.height - 80;
+  const btnW = 100;
+  const btnH = 40;
+  if (x >= btnX && x <= btnX + btnW && y >= btnY && y <= btnY + btnH) {
+    window.restartGame();
+    game.canvas.removeEventListener("click", winRestartHandler);
+    game.winRestartListenerAdded = false;
+  }
+}
+
+/* 
+  spawnExplosion: When a falling target (or heart collision) explodes, spawn particles.
+  Here, we spawn 10 particles for falling items.
+*/
+function spawnExplosion(x, y) {
+  for (let i = 0; i < 10; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 100 + 50;
+    const vx = Math.cos(angle) * speed;
+    const vy = Math.sin(angle) * speed;
+    window.game.particles.push(new Particle(x, y, vx, vy, 500));
+  }
+}
+
+/* 
+  spawnHeartParticles: When two win screen pandas collide, spawn 5 heart particles.
+  Each particle lasts for 3000ms.
+*/
+function spawnHeartParticles(x, y) {
+  for (let i = 0; i < 5; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 80 + 20;
+    const vx = Math.cos(angle) * speed;
+    const vy = Math.sin(angle) * speed;
+    window.game.particles.push(new Particle(x, y, vx, vy, 3000));
+  }
+}
+
+/* 
+  drawWinScreen() draws the win screen when the game state is "win".
+  It clears the canvas, draws the background (using the sky color of the last level),
+  then animates:
+    - Falling targets (hearts and stars) that explode after their random explosionTime expires.
+    - Dancing pandas that move around and, upon colliding with each other, spawn 5 heart particles.
+  Finally, it draws a Restart button at the bottom.
+*/
+function drawWinScreen() {
+  // Clear canvas.
+  game.ctx.clearRect(0, 0, game.canvas.width, game.canvas.height);
+  // Draw background.
+  game.ctx.fillStyle = levels[game.currentLevelIndex].skyColor;
+  game.ctx.fillRect(0, 0, game.canvas.width, game.canvas.height);
+  
+  // Process falling targets.
+  game.winFallingTargets.forEach((item, index) => {
+    item.update(16);
+    item.draw(game.ctx);
+    // When explosionTime expires, spawn explosion and replace the item.
+    if (item.explosionTime <= 0) {
+      spawnExplosion(item.x, item.y);
+      game.winFallingTargets[index] = new WinFallingItem();
+    }
+  });
+  
+  // Process dancing pandas.
+  // First, update each panda's collision cooldown.
+  game.winPandas.forEach(panda => {
+    if (panda.collisionCooldown === undefined) {
+      panda.collisionCooldown = 0;
+    } else if (panda.collisionCooldown > 0) {
+      panda.collisionCooldown -= 16;
+    }
+  });
+  // Check for collisions between each pair.
+  for (let i = 0; i < game.winPandas.length; i++) {
+    for (let j = i + 1; j < game.winPandas.length; j++) {
+      const p1 = game.winPandas[i];
+      const p2 = game.winPandas[j];
+      const dx = p1.x - p2.x;
+      const dy = p1.y - p2.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 40 && p1.collisionCooldown <= 0 && p2.collisionCooldown <= 0) {
+        // Collision detected: spawn 5 heart particles at collision point.
+        spawnHeartParticles((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+        p1.collisionCooldown = 1000;
+        p2.collisionCooldown = 1000;
+      }
+    }
+  }
+  
+  // Draw dancing pandas.
+  game.winPandas.forEach(panda => {
+    panda.x += panda.dx;
+    panda.y += panda.dy;
+    if (panda.x < 0 || panda.x > game.canvas.width) panda.dx *= -1;
+    if (panda.y < 0 || panda.y > game.canvas.height) panda.dy *= -1;
+    panda.time += 16;
+    drawPanda(game.ctx, panda.x, panda.y, 40, panda.time, panda.gender);
+  });
+  
+  // Draw Restart button.
+  draw3DButton(game.ctx, game.canvas.width / 2 - 50, game.canvas.height - 80, 100, 40, "Restart");
+  if (!game.winRestartListenerAdded) {
+    game.winRestartListenerAdded = true;
+    game.canvas.addEventListener("click", winRestartHandler);
+  }
+}
+
+/* 
+  Modified gameLoop: If game.state is "win", draw win screen.
+*/
+export function gameLoop(timestamp) {
+  if (!game.lastTime) game.lastTime = timestamp;
+  const deltaTime = timestamp - game.lastTime;
+  game.lastTime = timestamp;
+  
+  if (game.state === "win") {
+    drawWinScreen();
+    requestAnimationFrame(gameLoop);
+    return;
+  }
+  
+  updateGame(deltaTime);
+  drawGame();
+  requestAnimationFrame(gameLoop);
 }
 
 export let game;
@@ -79,12 +208,22 @@ export function initGame(canvas, avatar) {
     score: 0,
     spawnTimer: 0,
     lastTime: 0,
-    currentLevelIndex: 0
+    currentLevelIndex: 0,
+    // Will be initialized when win condition is reached.
+    winPandas: null,
+    winFallingTargets: null,
+    winRestartListenerAdded: false
   };
   window.game = game;
   return game;
 }
 
+/* 
+  updateGame: Updates game objects, handles collisions, spawns new objects,
+  and triggers level progression. When 200 points are reached, a level is completed.
+  Upon finishing the last level, win animations (dancing pandas and falling targets)
+  are initialized.
+*/
 export function updateGame(deltaTime) {
   if (game.state === "win") return;
   const currentLevel = levels[game.currentLevelIndex];
@@ -134,7 +273,7 @@ export function updateGame(deltaTime) {
   }
   game.rescuedPandas.forEach(p => p.time += deltaTime);
   
-  // Projectile collisions (ignoring pandas)
+  // Check projectile collisions (ignoring pandas).
   for (let i = game.projectiles.length - 1; i >= 0; i--) {
     const proj = game.projectiles[i];
     for (let j = 0; j < game.targets.length; j++) {
@@ -143,7 +282,7 @@ export function updateGame(deltaTime) {
       const dx = proj.x - target.x;
       const dy = proj.y - target.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < proj.radius + target.size/2 * getScaleForY(target.y, game.canvas.height)) {
+      if (dist < proj.radius + target.size / 2 * getScaleForY(target.y, game.canvas.height)) {
         if (target.type === "heart" || target.type === "star") {
           if (!target.hit) {
             target.hit = true;
@@ -158,11 +297,18 @@ export function updateGame(deltaTime) {
     }
   }
   
-  // Player-body collisions (remove this score counter text per instructions)
+  // Player-body collision with hearts/stars.
   game.targets.forEach(target => {
     if ((target.type === "heart" || target.type === "star") && !target.hit) {
-      if (rectCircleColliding(game.player.x - game.player.width/2, game.player.y - game.player.height, game.player.width, game.player.height,
-          target.x, target.y, target.size/2 * getScaleForY(target.y, game.canvas.height))) {
+      if (rectCircleColliding(
+          game.player.x - game.player.width / 2,
+          game.player.y - game.player.height,
+          game.player.width,
+          game.player.height,
+          target.x,
+          target.y,
+          target.size / 2 * getScaleForY(target.y, game.canvas.height)
+        )) {
         target.hit = true;
         addPointAnimation("+" + target.scoreValue, target.x, target.y, game.pointAnimations);
         game.score += target.scoreValue;
@@ -171,7 +317,7 @@ export function updateGame(deltaTime) {
     }
   });
   
-  // Panda rescue (dragged into backpack)
+  // Panda rescue: if a free panda is inside the backpack, start its collection animation.
   game.targets.forEach(target => {
     if (target.type === "panda" && target.state === "free") {
       const bp = game.player.backpack;
@@ -183,10 +329,17 @@ export function updateGame(deltaTime) {
     }
   });
   
-  // Obstacle collision (body only)
+  // Obstacle collision (body only).
   game.obstacles.forEach((obs, index) => {
-    if (rectCircleColliding(game.player.x - game.player.width/2, game.player.y - game.player.height, game.player.width, game.player.height,
-        obs.x + obs.size/2, obs.y + obs.size/2, obs.size/2 * getScaleForY(obs.y, game.canvas.height))) {
+    if (rectCircleColliding(
+          game.player.x - game.player.width / 2,
+          game.player.y - game.player.height,
+          game.player.width,
+          game.player.height,
+          obs.x + obs.size / 2,
+          obs.y + obs.size / 2,
+          obs.size / 2 * getScaleForY(obs.y, game.canvas.height)
+        )) {
       game.score = Math.max(0, game.score - 5);
       addPointAnimation("-5", game.player.x, game.player.y, game.pointAnimations);
       addLogMessage(`${game.player.avatar} hit an obstacle`, game.logMessages);
@@ -195,7 +348,7 @@ export function updateGame(deltaTime) {
     }
   });
   
-  // Projectiles remove obstacles
+  // Projectiles remove obstacles.
   for (let i = game.projectiles.length - 1; i >= 0; i--) {
     const proj = game.projectiles[i];
     for (let j = game.obstacles.length - 1; j >= 0; j--) {
@@ -203,7 +356,7 @@ export function updateGame(deltaTime) {
       const dx = proj.x - obs.x;
       const dy = proj.y - obs.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < proj.radius + obs.size/2 * getScaleForY(obs.y, game.canvas.height)) {
+      if (dist < proj.radius + obs.size / 2 * getScaleForY(obs.y, game.canvas.height)) {
         game.obstacles.splice(j, 1);
         game.projectiles.splice(i, 1);
         break;
@@ -241,16 +394,17 @@ export function updateGame(deltaTime) {
     game.spawnTimer = 0;
   }
   
-  // Level progression.
+  // Level progression: each level requires 200 points.
   if (game.score >= 200) {
     if (game.currentLevelIndex < levels.length - 1) {
+      // Proceed to next level.
+      game.score = 0;
       game.currentLevelIndex++;
       game.targets = [];
       game.obstacles = [];
       game.decorations = [];
       game.scrollOffset = 0;
-      const newLevel = levels[game.currentLevelIndex];
-      if (newLevel.name !== "Space") {
+      if (levels[game.currentLevelIndex].name !== "Space") {
         game.clouds = [];
         game.birds = [];
         for (let i = 0; i < 5; i++) {
@@ -266,24 +420,59 @@ export function updateGame(deltaTime) {
         }
       }
     } else {
+      // Win condition reached.
+      if (!game.winPandas) {
+        game.winPandas = [];
+        // Create 5 dancing pandas with random positions and slight movement.
+        for (let i = 0; i < 5; i++) {
+          game.winPandas.push({
+            x: Math.random() * game.canvas.width,
+            y: Math.random() * game.canvas.height,
+            dx: (Math.random() - 0.5) * 2,
+            dy: (Math.random() - 0.5) * 2,
+            time: 0,
+            gender: Math.random() < 0.5 ? "female" : "male",
+            collisionCooldown: 0 // For controlling collision explosions.
+          });
+        }
+        // Create 15 falling targets (hearts or stars) for the win screen.
+        game.winFallingTargets = [];
+        for (let i = 0; i < 15; i++) {
+          game.winFallingTargets.push(new WinFallingItem());
+        }
+      }
       game.state = "win";
-      // Win screen will be triggered externally.
     }
   }
 }
 
+/* 
+  spawnExplosion: When a falling target explodes, spawn particles.
+  (Already defined above.)
+*/
+
+/* 
+  drawGame: Draws the current game state including sky, ground, objects, progress bar, and menu button.
+  The progress bar is fixed to a level goal of 200 points.
+*/
 export function drawGame() {
   if (game.state === "win") return;
+  
   game.ctx.clearRect(0, 0, game.canvas.width, game.canvas.height);
+  
+  // Draw sky.
   const skyHeight = game.canvas.height * 0.2;
   game.ctx.fillStyle = levels[game.currentLevelIndex].skyColor;
   game.ctx.fillRect(0, 0, game.canvas.width, skyHeight);
+  
+  // Draw clouds/birds or space stars.
   if (levels[game.currentLevelIndex].name !== "Space") {
     game.clouds.forEach(cloud => cloud.draw(game.ctx));
     game.birds.forEach(bird => bird.draw(game.ctx));
   } else {
     game.spaceStars.forEach(star => star.draw(game.ctx));
   }
+  
   if (game.logMessages.length > 0) {
     game.ctx.save();
     game.ctx.font = "20px sans-serif";
@@ -292,11 +481,13 @@ export function drawGame() {
     game.ctx.fillText(game.logMessages[0].text, game.canvas.width / 2, 40);
     game.ctx.restore();
   }
+  
   game.ctx.save();
   game.ctx.translate(0, skyHeight + (game.scrollOffset % 50));
   game.ctx.fillStyle = levels[game.currentLevelIndex].groundPattern;
   game.ctx.fillRect(0, 0, game.canvas.width, game.canvas.height - skyHeight);
   game.ctx.restore();
+  
   game.decorations.forEach(dec => dec.draw(game.ctx));
   game.obstacles.forEach(obs => obs.draw(game.ctx, levels[game.currentLevelIndex].name));
   game.targets.forEach(target => {
@@ -305,6 +496,7 @@ export function drawGame() {
   });
   game.projectiles.forEach(proj => proj.draw(game.ctx));
   game.particles.forEach(p => p.draw(game.ctx));
+  
   game.ctx.save();
   game.ctx.font = "20px sans-serif";
   game.ctx.textAlign = "center";
@@ -313,12 +505,14 @@ export function drawGame() {
     game.ctx.fillText(pa.text, pa.x, pa.y);
   });
   game.ctx.restore();
+  
   game.player.draw(game.ctx);
-  // Removed the score counter label above the progress bar per instructions.
+  
+  // Draw progress bar (fixed goal of 200 points).
   game.ctx.save();
+  const levelGoal = 200;
   const progressBarWidth = Math.max(100, game.canvas.width * 0.5);
-  const progress = (game.score - (game.currentLevelIndex === 0 ? 0 : levels[game.currentLevelIndex - 1].scrollSpeed)) /
-                     (levels[game.currentLevelIndex].scrollSpeed - (game.currentLevelIndex === 0 ? 0 : levels[game.currentLevelIndex - 1].scrollSpeed));
+  const progress = Math.min(1, game.score / levelGoal);
   const barX = game.canvas.width - progressBarWidth - 20;
   const barY = 50;
   const barHeight = 20;
@@ -336,19 +530,17 @@ export function drawGame() {
   game.ctx.fillStyle = grad;
   game.ctx.fillRect(barX, barY, progressBarWidth * progress, barHeight);
   game.ctx.restore();
+  
+  // Draw level indicator under progress bar.
+  game.ctx.fillStyle = "#333";
+  game.ctx.font = "16px sans-serif";
+  game.ctx.textAlign = "right";
+  game.ctx.fillText(`Level ${game.currentLevelIndex + 1}/${levels.length}`, game.canvas.width - 20, barY + barHeight + 20);
+  
   game.ctx.restore();
-}
-
-
-export function gameLoop(timestamp) {
-  if (!game.lastTime) game.lastTime = timestamp;
-  const deltaTime = timestamp - game.lastTime;
-  game.lastTime = timestamp;
-  if (!paused && game.state === "playing") {
-    updateGame(deltaTime);
-    drawGame();
-    requestAnimationFrame(gameLoop);
-  }
+  
+  // Draw menu button at top-left.
+  draw3DButton(game.ctx, 20, 20, 80, 30, "Menu");
 }
 
 export { rectCircleColliding };

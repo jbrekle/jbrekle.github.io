@@ -1,13 +1,14 @@
 import { setupMenu } from './menu.js';
 import { initGame, gameLoop } from './game.js';
-import { setupInput } from './input.js';
+import { setupInput, setOnShootProjectile } from './input.js';
 import { startMenuAnimation } from './animations.js';
 import { Player } from './player.js';
+import { Projectile } from './entities.js';
 
 window.PlayerClass = Player;
 window.selectedAvatar = "Mona";
+window.playerShakeTime = 0;
 
-// Ensure the game canvas fills the window
 const canvas = document.getElementById("gameCanvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -18,6 +19,9 @@ function selectAvatar(avatar) {
 function startGameHandler() {
   document.getElementById("menuOverlay").style.display = "none";
   const game = initGame(canvas, window.selectedAvatar);
+  setOnShootProjectile((x, y, vx, vy) => {
+    game.projectiles.push(new Projectile(x, y, vx, vy));
+  });
   setupInput(canvas, game.player, game.targets, pauseGame);
   requestAnimationFrame(gameLoop);
 }
