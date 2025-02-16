@@ -4,6 +4,13 @@
 const LanguageContext = createContext();
 
 const translations = {
+  de: {
+    back: "Zurück",
+    next: "Weiter",
+    submit: "Abschicken",
+    thankYou: "Danke!",
+    loading: "Konfiguration wird geladen..."
+  },
   en: {
     back: "Back",
     next: "Next",
@@ -77,6 +84,7 @@ const translations = {
 };
 
 export const availableLanguages = [
+  { code: "de", label: "Deutsch" },
   { code: "en", label: "English" },
   { code: "zh", label: "中文" },
   { code: "hi", label: "हिन्दी" },

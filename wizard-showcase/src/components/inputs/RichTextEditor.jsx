@@ -1,34 +1,25 @@
-﻿import React, { useRef, useEffect } from 'react';
+﻿import React, { useState } from 'react';
+import ReactMde from 'react-mde';
+import 'react-mde/lib/styles/css/react-mde-all.css';
 
-// A basic rich text editor using a contenteditable div.
-// NOTE: In a production app you might use a full-featured editor.
+// A rich text editor using react-mde which produces markdown.
+// This provides formatting controls and outputs markdown on submit.
 function RichTextEditor({ value, onChange }) {
-  const editorRef = useRef(null);
-
-  useEffect(() => {
-    // Update innerHTML if value has changed externally.
-    if (editorRef.current && editorRef.current.innerHTML !== value) {
-      editorRef.current.innerHTML = value;
-    }
-  }, [value]);
-
-  // When the editor loses focus, send the innerHTML value.
-  const handleBlur = () => {
-    if (editorRef.current) {
-      onChange(editorRef.current.innerHTML);
-    }
-  };
+  const [selectedTab, setSelectedTab] = useState('write');
 
   return (
-    <div 
-      ref={editorRef}
-      contentEditable
-      onBlur={handleBlur}
-      className="border rounded p-2 min-h-[100px]"
-      suppressContentEditableWarning={true}
-    ></div>
+    <div>
+      <ReactMde
+        value={value}
+        onChange={onChange}
+        selectedTab={selectedTab}
+        onTabChange={setSelectedTab}
+        generateMarkdownPreview={(markdown) =>
+          Promise.resolve(markdown)
+        }
+      />
+    </div>
   );
 }
 
 export default RichTextEditor;
-  

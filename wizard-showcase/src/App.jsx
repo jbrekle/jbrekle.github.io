@@ -3,6 +3,7 @@ import { loadConfig } from './configLoader';
 import Wizard from './components/Wizard';
 import { LanguageProvider, useLanguage } from './i18n';
 import { ThemeProvider } from './ThemeContext';
+import { localize } from './utils/localize';
 
 function App() {
   const [config, setConfig] = useState(null);
@@ -10,11 +11,11 @@ function App() {
   useEffect(() => {
     // Load the config file at runtime (based on URL param "tenant")
     loadConfig()
-      .then(cfg => {
+      .then((cfg) => {
         setConfig(cfg);
       })
-      .catch(err => {
-        console.error("Failed to load config:", err);
+      .catch((err) => {
+        console.error('Failed to load config:', err);
       });
   }, []);
 
@@ -29,20 +30,29 @@ function App() {
   return (
     <ThemeProvider theme={config.theme}>
       <LanguageProvider defaultLanguage={navigator.language.slice(0, 2)}>
-        <div className="min-h-screen bg-gray-100">
-          {/* Header with title and language selector */}
-          <header className="bg-white shadow">
-            <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-              <h1 className="text-xl font-bold">{config.title || "Wizard Prototype"}</h1>
-              <LanguageSelector />
-            </div>
-          </header>
-          <main className="max-w-4xl mx-auto py-6 px-4">
-            <Wizard config={config} />
-          </main>
-        </div>
+        <AppContent config={config} />
       </LanguageProvider>
     </ThemeProvider>
+  );
+}
+
+function AppContent({ config }) {
+  const { language } = useLanguage();
+  return (
+    <div className="bg-gray-100 p-4">
+      {/* Header with title and language selector */}
+      <header className="bg-white shadow mb-4">
+        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <h1 className="text-xl font-bold">
+            {localize(config.title, language)}
+          </h1>
+          <LanguageSelector />
+        </div>
+      </header>
+      <main className="max-w-4xl mx-auto">
+        <Wizard config={config} />
+      </main>
+    </div>
   );
 }
 
@@ -54,7 +64,7 @@ function LanguageSelector() {
       onChange={(e) => setLanguage(e.target.value)}
       className="border rounded p-1"
     >
-      {availableLanguages.map(lang => (
+      {availableLanguages.map((lang) => (
         <option key={lang.code} value={lang.code}>
           {lang.label}
         </option>
@@ -64,4 +74,3 @@ function LanguageSelector() {
 }
 
 export default App;
-  
