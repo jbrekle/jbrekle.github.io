@@ -3,10 +3,10 @@ import Question from './Question';
 import CollapsibleSection from './CollapsibleSection';
 import Accordion from './Accordion';
 import { useLanguage } from '../i18n';
-import { validateAnswer } from '../utils/validation';
 import { localize } from '../utils/localize';
+import { validateAnswer } from '../utils/validation';
 
-function Step({ page, answers, onAnswerChange }) {
+function Step({ page, answers, onAnswerChange, touched, markTouched }) {
   const { language } = useLanguage();
 
   return (
@@ -21,11 +21,9 @@ function Step({ page, answers, onAnswerChange }) {
             )}
             {section.questions &&
               section.questions.map((question) => {
-                const error = validateAnswer(
-                  question,
-                  answers[question.id],
-                  language
-                );
+                const error = touched[question.id]
+                  ? validateAnswer(question, answers[question.id], language)
+                  : '';
                 return (
                   <Question
                     key={question.id}
@@ -33,13 +31,13 @@ function Step({ page, answers, onAnswerChange }) {
                     value={answers[question.id]}
                     onChange={onAnswerChange}
                     error={error}
+                    markTouched={markTouched}
                   />
                 );
               })}
           </div>
         );
 
-        // Wrap the section in a collapsible or accordion component if specified.
         if (section.collapsible) {
           return (
             <CollapsibleSection key={index} title={localize(section.heading, language)} defaultOpen>

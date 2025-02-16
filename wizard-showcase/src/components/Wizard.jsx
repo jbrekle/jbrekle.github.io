@@ -7,6 +7,7 @@ import { localize } from '../utils/localize';
 function Wizard({ config }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [touched, setTouched] = useState({});
   const { language } = useLanguage();
 
   const pages = config.pages;
@@ -16,13 +17,19 @@ function Wizard({ config }) {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
   }
 
-  // Validate the current page – loop through all sections and questions.
+  // Mark a field as touched.
+  function markTouched(questionId) {
+    setTouched((prev) => ({ ...prev, [questionId]: true }));
+  }
+
   let pageHasErrors = false;
   pages[currentPage].sections.forEach((section) => {
     section.questions.forEach((question) => {
-      const error = validateAnswer(question, answers[question.id], language);
-      if (error) {
-        pageHasErrors = true;
+      if (touched[question.id]) {
+        const error = validateAnswer(question, answers[question.id], language);
+        if (error) {
+          pageHasErrors = true;
+        }
       }
     });
   });
@@ -40,12 +47,10 @@ function Wizard({ config }) {
   }
 
   function handleSubmit() {
-    // For demo, if config.demo true, log the results to the console.
     if (config.demo) {
       console.log('Submitted Answers:', answers);
-      setCurrentPage(pages.length); // Show thank-you page.
+      setCurrentPage(pages.length);
     } else {
-      // Post to a REST API endpoint.
       fetch('/api/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -60,7 +65,6 @@ function Wizard({ config }) {
     }
   }
 
-  // Render thank-you page after final submission.
   if (currentPage === pages.length) {
     return (
       <div className="text-center p-6">
@@ -77,7 +81,7 @@ function Wizard({ config }) {
   }
 
   return (
-    <div className="bg-white shadow rounded p-6">
+    <div className="bg-white shadow rounded p-6" key={language}>
       <h2 className="text-xl font-semibold mb-4">
         {localize(pages[currentPage].title, language)}
       </h2>
@@ -85,9 +89,10 @@ function Wizard({ config }) {
         page={pages[currentPage]}
         answers={answers}
         onAnswerChange={handleAnswerChange}
+        touched={touched}
+        markTouched={markTouched}
       />
       <div className="flex justify-between mt-6">
-        {/* Hide back button on first page */}
         {currentPage > 0 ? (
           <button
             onClick={handleBack}

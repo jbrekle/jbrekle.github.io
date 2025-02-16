@@ -12,21 +12,29 @@ import InfoBox from './InfoBox';
 import { localize } from '../utils/localize';
 import { useLanguage } from '../i18n';
 
-function Question({ question, value, onChange, error }) {
+function Question({ question, value, onChange, error, markTouched }) {
   const { language } = useLanguage();
+
+  // onBlur handler to mark the field as touched.
+  const handleBlur = () => {
+    if (markTouched) {
+      markTouched(question.id);
+    }
+  };
+
   // Wrapper for onChange: pass the value along with the question id.
   const handleChange = (val) => {
     onChange(question.id, val);
   };
 
   let inputElement;
-  // Render the input component based on question type.
   switch (question.type) {
     case 'text':
       inputElement = (
         <TextInput
           value={value || ''}
           onChange={handleChange}
+          onBlur={handleBlur}
           keyboard={question.keyboard}
         />
       );
@@ -36,6 +44,7 @@ function Question({ question, value, onChange, error }) {
         <MultilineTextInput
           value={value || ''}
           onChange={handleChange}
+          onBlur={handleBlur}
           keyboard={question.keyboard}
         />
       );
@@ -60,7 +69,12 @@ function Question({ question, value, onChange, error }) {
       break;
     case 'date':
       inputElement = (
-        <DatePicker value={value || ''} onChange={handleChange} />
+        <DatePicker
+          value={value || ''}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          limit={question.limit}
+        />
       );
       break;
     case 'rtf':
