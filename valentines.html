@@ -88,10 +88,8 @@
   </style>
 </head>
 <body>
-  <!-- Main game canvas -->
   <canvas id="gameCanvas"></canvas>
   
-  <!-- Start/Menu overlay -->
   <div id="menuOverlay" class="menu-overlay">
     <div id="gameTitle"></div>
     <div id="welcomeMessage"></div>
@@ -112,14 +110,12 @@
     <button class="menu-button" id="startGameBtn">Start Game</button>
   </div>
   
-  <!-- Pause overlay -->
   <div id="pauseOverlay" class="menu-overlay">
     <h1 style="color:#ff6699;">Paused</h1>
     <button class="menu-button" id="resumeBtn">Resume</button>
     <button class="menu-button" id="changeAvatarBtn">Change Character</button>
   </div>
   
-  <!-- Win overlay -->
   <div id="winOverlay" class="menu-overlay">
     <h1 style="color:#ff6699; font-size:2.8em;">Congratulations!</h1>
     <p style="font-size:1.3em;">You completed MoJo's Valentines Adventure</p>
@@ -128,7 +124,6 @@
     <button class="menu-button" id="restartBtn">Play Again</button>
   </div>
   
-  <!-- Boot the app -->
   <script type="module" src="./game-showcase/main.js"></script>
 </body>
 </html>
