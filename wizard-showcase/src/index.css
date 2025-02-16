@@ -1,0 +1,16 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS variables for theming */
+:root {
+  --primary-color: blue;
+  --secondary-color: gray;
+}
+
+/* Example usage of CSS variables */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+  
