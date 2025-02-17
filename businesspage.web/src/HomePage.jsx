@@ -25,7 +25,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './index.css';
 import { texts } from './config';
-import logo from '../img/logo.webp';
+import logo from './img/logo.webp';
 
 // Page transition variants for Framer Motion
 const pageVariants = {

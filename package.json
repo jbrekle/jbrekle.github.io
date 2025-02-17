@@ -1,29 +1,16 @@
 {
-  "name": "business-homepage",
-  "version": "1.2.0",
-  "private": true,
-  "dependencies": {
-    "framer-motion": "^10.0.0",
-    "lucide-react": "^0.474.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-icons": "^4.8.0",
-    "react-markdown": "^8.0.6",
-    "react-router-dom": "^6.11.2",
-    "react-simple-typewriter": "^5.0.1",
-    "remark-gfm": "^3.0.1"
-  },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^3.1.0",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.5.1",
-    "rollup-plugin-copy": "^3.5.0",
-    "tailwindcss": "^3.4.17",
-    "vite": "^4.3.9"
+    "build": "npm run build-subprojects && npm run collect-dist",
+    "build-subprojects": "node -e \"require('os').platform().startsWith('win') ? require('child_process').execSync('npm run build-subprojects-windows', {stdio: 'inherit'}) : require('child_process').execSync('npm run build-subprojects-unix', {stdio: 'inherit'})\"",
+
+    "build-subprojects-unix": "for d in */; do if [ -f \"$d/package.json\" ]; then (cd \"$d\" && npm install --legacy-peer-deps && npm run build); fi; done",
+
+    "build-subprojects-windows": "for /d %d in (*) do if exist \"%d\\package.json\" ( pushd \"%d\" && npm install --legacy-peer-deps && npm run build && popd )",
+    "collect-dist": "node -e \"require('os').platform().startsWith('win') ? require('child_process').execSync('npm run collect-dist-windows', {stdio: 'inherit'}) : require('child_process').execSync('npm run collect-dist-unix', {stdio: 'inherit'})\"",
+
+    "collect-dist-unix": "rm -rf dist && mkdir dist && for d in */; do if [ -d \"$d/dist\" ]; then cp -R \"$d/dist\" \"dist/${d%/}\"; fi; done",
+
+    "collect-dist-windows": "if exist dist rmdir /S /Q dist && mkdir dist && for /d %d in (*) do if exist \"%d\\dist\" ( xcopy \"%d\\dist\" \"dist\\%d\" /E /I )"
+
   }
 }

@@ -1,11 +1,11 @@
-import portrait_jonas from "../img/team_jonas_brekle.jpg";
-import portrait_mona from "../img/team_mona_li.jpg";
-import portrait_gustav from "../img/team_gustav_tischner.jpg";
-import testimonial1 from "../img/testimonial_1.jpg";
-import testimonial2 from "../img/testimonial_2.jpg";
-import testimonial3 from "../img/testimonial_3.jpg";
-import leipzig from "../img/leipzig.jpg";
-import desk from "../img/desk.jpg";
+import portrait_jonas from "./img/team_jonas_brekle.jpg";
+import portrait_mona from "./img/team_mona_li.jpg";
+import portrait_gustav from "./img/team_gustav_tischner.jpg";
+import testimonial1 from "./img/testimonial_1.jpg";
+import testimonial2 from "./img/testimonial_2.jpg";
+import testimonial3 from "./img/testimonial_3.jpg";
+import leipzig from "./img/leipzig.jpg";
+import desk from "./img/desk.jpg";
 
 export const texts = {
   en: {
