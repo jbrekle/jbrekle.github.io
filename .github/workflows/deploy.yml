@@ -25,21 +25,9 @@ jobs:
         with:
           node-version: '22.x'  # Use your preferred Node.js version
 
-      # Step 3: Install dependencies
-      - name: Install dependencies
-        run: npm install
-
       # Step 4: Build the project using "npm run build"
       - name: Build project
         run: npm run build
-
-      - name: clean project1
-        run: rm -rf src
-      - name: clean project2
-        run: rm -rf node_modules
-
-      - name: list project
-        run: ls -lhR
 
       # Step 5: Deploy the build output to GitHub Pages
       - name: Deploy to GitHub Pages
