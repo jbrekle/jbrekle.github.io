@@ -7,6 +7,8 @@ import RichTextEditor from './inputs/RichTextEditor';
 import SliderInput from './inputs/SliderInput';
 import FileUpload from './inputs/FileUpload';
 import MultilineTextInput from './inputs/MultilineTextInput';
+import BigTileChoice from './inputs/BigTileChoice';
+import Explanation from './inputs/Explanation';
 import Tooltip from './Tooltip';
 import InfoBox from './InfoBox';
 import { localize } from '../utils/localize';
@@ -95,18 +97,35 @@ function Question({ question, value, onChange, error, markTouched }) {
     case 'file':
       inputElement = <FileUpload onChange={handleChange} />;
       break;
+    case 'bigTileChoice':
+      inputElement = (
+        <BigTileChoice
+          options={question.options}
+          value={value}
+          onChange={handleChange}
+        />
+      );
+      break;
+    case 'explaination':
+      // For an explaination type, simply render the explanation text.
+      inputElement = (
+        <Explanation text={localize(question.label, language)} noBubble={question.noBubble} />
+      );
+      break;
     default:
       inputElement = <div>Unsupported question type: {question.type}</div>;
   }
 
   return (
     <div className="mb-4">
-      <label className="block font-medium mb-1">
-        {localize(question.label, language)}
-        {question.tooltip && (
-          <Tooltip text={localize(question.tooltip, language)} />
-        )}
-      </label>
+      {question.type !== 'explaination' && (
+        <label className="block font-medium mb-1">
+          {localize(question.label, language)}
+          {question.tooltip && (
+            <Tooltip text={localize(question.tooltip, language)} />
+          )}
+        </label>
+      )}
       {inputElement}
       {question.info && (
         <InfoBox text={localize(question.info, language)} />

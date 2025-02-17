@@ -78,4 +78,5 @@ content...
 
 so the filecontent should begin and end with the filename. i need this for postprocessing. make sure to not emit files multiple times and dont mention files that remain unchanged.
 "
-Write-Output "task: "
+Write-Output "tasks: 
+-"

@@ -17,11 +17,11 @@ const LinkRenderer = ({ href, children }) => {
 };
 
 // Displays an informational message below a question.
-// Renders markdown so that images and videos embedded in the text are displayed.
+// Renders markdown so that images and videos embedded in the text are displayed without wrapping <p> tags.
 function InfoBox({ text }) {
   return (
     <div className="mt-1 p-2 bg-blue-50 border border-blue-200 text-blue-700 text-sm rounded">
-      <ReactMarkdown components={{ a: LinkRenderer }}>
+      <ReactMarkdown components={{ p: ({ node, ...props }) => <>{props.children}</>, a: LinkRenderer }}>
         {text}
       </ReactMarkdown>
     </div>

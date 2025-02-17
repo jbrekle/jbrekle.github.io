@@ -16,7 +16,80 @@
     primaryColor: "blue",
     secondaryColor: "gray"
   },
-  demo: true, // In demo mode, submission is logged to console.
+  demo: true,
+  consultationMessage: {
+    de: "Ihr Dialog ist beendet. Für weitere Hilfe kontaktieren wir Sie persönlich.",
+    en: "Your session has ended. For further assistance, we will contact you personally.",
+    zh: "您的对话已结束。如需进一步帮助，我们将与您联系。",
+    hi: "आपका संवाद समाप्त हो गया है। आगे की सहायता के लिए हम आपसे व्यक्तिगत रूप से संपर्क करेंगे।",
+    es: "Su sesión ha terminado. Para más ayuda, le contactaremos personalmente.",
+    fr: "Votre session est terminée. Pour toute assistance supplémentaire, nous vous contacterons personnellement.",
+    ar: "لقد انتهت جلستك. لمزيد من المساعدة، سنتصل بك شخصيًا.",
+    bn: "আপনার সেশন শেষ হয়েছে। আরও সহায়তার জন্য আমরা আপনার সাথে ব্যক্তিগতভাবে যোগাযোগ করব।",
+    ru: "Ваша сессия завершена. Для дальнейшей помощи мы свяжемся с вами лично.",
+    pt: "Sua sessão terminou. Para mais assistência, entraremos em contato pessoalmente.",
+    id: "Sesi Anda telah berakhir. Untuk bantuan lebih lanjut, kami akan menghubungi Anda secara pribadi."
+  },
+  consulationButtonLabel: {
+    de: "Kontaktieren Sie uns",
+    en: "Contact Us",
+    zh: "联系我们",
+    hi: "संपर्क करें",
+    es: "Contáctenos",
+    fr: "Contactez-nous",
+    ar: "اتصل بنا",
+    bn: "আমাদের সাথে যোগাযোগ করুন",
+    ru: "Свяжитесь с нами",
+    pt: "Contate-nos",
+    id: "Hubungi Kami"
+  },
+  contactQuestions: [
+    {
+      id: "contactEmail",
+      type: "text",
+      label: {
+        de: "E-Mail-Adresse für Rückruf",
+        en: "Contact Email",
+        zh: "联系电子邮件",
+        hi: "संपर्क ईमेल",
+        es: "Correo de Contacto",
+        fr: "Email de Contact",
+        ar: "البريد الإلكتروني للتواصل",
+        bn: "ফোন কলের জন্য ইমেইল",
+        ru: "Контактный Email",
+        pt: "Email de Contato",
+        id: "Email Kontak"
+      },
+      tooltip: {
+        de: "Geben Sie Ihre E-Mail-Adresse ein, damit wir Sie kontaktieren können.",
+        en: "Enter your email address for us to contact you.",
+        zh: "请输入您的电子邮件地址，以便我们联系您。",
+        hi: "हमें संपर्क करने के लिए अपना ईमेल पता दर्ज करें।",
+        es: "Ingresa tu dirección de correo electrónico para que podamos contactarte.",
+        fr: "Entrez votre adresse e-mail pour que nous puissions vous contacter.",
+        ar: "أدخل بريدك الإلكتروني لنتواصل معك.",
+        bn: "আপনার ইমেইল ঠিকানা লিখুন যাতে আমরা আপনার সাথে যোগাযোগ করতে পারি।",
+        ru: "Введите ваш email, чтобы мы могли с вами связаться.",
+        pt: "Digite seu email para que possamos contatá-lo.",
+        id: "Masukkan email Anda agar kami dapat menghubungi Anda."
+      },
+      info: {
+        de: "Ihre E-Mail wird ausschließlich zur Kontaktaufnahme verwendet.",
+        en: "Your email will only be used to contact you.",
+        zh: "您的电子邮件仅用于联系我们。",
+        hi: "आपका ईमेल केवल संपर्क के लिए उपयोग किया जाएगा।",
+        es: "Tu correo solo se usará para contactarte.",
+        fr: "Votre email sera uniquement utilisé pour vous contacter.",
+        ar: "سيتم استخدام بريدك الإلكتروني فقط للتواصل معك.",
+        bn: "আপনার ইমেইল শুধুমাত্র যোগাযোগের জন্য ব্যবহার করা হবে।",
+        ru: "Ваш email будет использоваться только для связи с вами.",
+        pt: "Seu email será usado apenas para contato.",
+        id: "Email Anda hanya akan digunakan untuk menghubungi Anda."
+      },
+      validation: { type: "email" },
+      required: true
+    }
+  ],
   pages: [
     {
       title: {
@@ -93,128 +166,80 @@
               required: true
             }
           ]
-        },
+        }
+      ]
+    },
+    // New second page with BigTileChoice.
+    {
+      title: {
+        de: "Große Kachel Auswahl",
+        en: "Big Tile Choice",
+        zh: "大瓷砖选择",
+        hi: "बिग टाइल चॉइस",
+        es: "Elección de Gran Azulejo",
+        fr: "Choix de Grande Tuile",
+        ar: "اختيار المربع الكبير",
+        bn: "বড় টাইল চয়েস",
+        ru: "Большой выбор плитки",
+        pt: "Escolha de Grande Ladrilho",
+        id: "Pilihan Ubin Besar"
+      },
+      sections: [
         {
           heading: {
-            de: "Auswahlmöglichkeiten",
-            en: "Multiple Choice",
-            zh: "多项选择",
-            hi: "विकल्प चुनें",
-            es: "Opción Múltiple",
-            fr: "Choix multiples",
-            ar: "اختيارات متعددة",
-            bn: "বহু বিকল্প",
-            ru: "Множественный выбор",
-            pt: "Múltipla Escolha",
-            id: "Pilihan Ganda"
+            de: "Bitte wählen Sie eine Option",
+            en: "Please choose an option",
+            zh: "请选择一个选项",
+            hi: "कृपया एक विकल्प चुनें",
+            es: "Por favor, elija una opción",
+            fr: "Veuillez choisir une option",
+            ar: "يرجى اختيار خيار",
+            bn: "একটি বিকল্প নির্বাচন করুন",
+            ru: "Пожалуйста, выберите вариант",
+            pt: "Por favor, escolha uma opção",
+            id: "Silakan pilih satu opsi"
           },
           questions: [
             {
-              id: "q2",
-              type: "radio",
+              id: "qBigTile",
+              type: "bigTileChoice",
               label: {
-                de: "Wählen Sie eine Option",
-                en: "Choose one option",
-                zh: "选择一个选项",
-                hi: "एक विकल्प चुनें",
-                es: "Elige una opción",
-                fr: "Choisissez une option",
-                ar: "اختر خيارًا واحدًا",
+                de: "Bitte wählen Sie eine Option",
+                en: "Please choose an option",
+                zh: "请选择一个选项",
+                hi: "कृपया एक विकल्प चुनें",
+                es: "Por favor, elija una opción",
+                fr: "Veuillez choisir une option",
+                ar: "يرجى اختيار خيار",
                 bn: "একটি বিকল্প নির্বাচন করুন",
-                ru: "Выберите один вариант",
-                pt: "Escolha uma opção",
-                id: "Pilih satu opsi"
+                ru: "Пожалуйста, выберите вариант",
+                pt: "Por favor, escolha uma opção",
+                id: "Silakan pilih satu opsi"
               },
-              options: ["Option 1", "Option 2", "Option 3"],
               tooltip: {
-                de: "Wählen Sie nur eine Option.",
-                en: "Select one option only.",
-                zh: "只选择一个选项",
-                hi: "केवल एक विकल्प चुनें",
-                es: "Selecciona solo una opción",
-                fr: "Sélectionnez une seule option",
-                ar: "اختر خيارًا واحدًا فقط",
-                bn: "শুধুমাত্র একটি বিকল্প নির্বাচন করুন",
-                ru: "Выберите только один вариант",
-                pt: "Selecione apenas uma opção",
-                id: "Pilih satu opsi saja"
+                de: "Wählen Sie eine der Kacheln aus.",
+                en: "Select one of the tiles.",
+                zh: "选择一个瓷砖。",
+                hi: "इन टाइलों में से एक चुनें।",
+                es: "Seleccione una de las opciones.",
+                fr: "Sélectionnez l'une des tuiles.",
+                ar: "اختر واحدة من المربعات.",
+                bn: "একটি টাইল নির্বাচন করুন।",
+                ru: "Выберите одну из плиток.",
+                pt: "Selecione um dos ladrilhos.",
+                id: "Pilih salah satu ubin."
               },
-              info: {
-                de: "Radiobuttons ermöglichen eine Einzelwahl.",
-                en: "Radio buttons allow single selection.",
-                zh: "单选按钮允许单项选择",
-                hi: "रेडियो बटन एकल चयन की अनुमति देते हैं",
-                es: "Los botones de opción permiten una sola selección",
-                fr: "Les boutons radio permettent une sélection unique",
-                ar: "أزرار الاختيار تسمح بتحديد خيار واحد",
-                bn: "রেডিও বাটনগুলি একক নির্বাচন করতে দেয়",
-                ru: "Радиокнопки позволяют выбрать один вариант",
-                pt: "Botões de opção permitem seleção única",
-                id: "Tombol radio memungkinkan pemilihan tunggal"
+              options: [
+                { id: "1", label: "ok choice", explaination: "This is an ok choice." },
+                { id: "2", label: "also ok choice", explaination: "This is also an ok choice." },
+                { id: "3", label: "early exit choice", explaination: "This choice will exit the wizard early." }
+              ],
+              abortCondition: {
+                comparer: "equal",
+                value: "3",
+                abortExplaination: "You have selected an early exit choice. Please contact us for further assistance."
               },
               required: true
-            }
-          ]
-        },
-        {
-          heading: {
-            de: "Auswahlkästchen",
-            en: "Checkboxes",
-            zh: "复选框",
-            hi: "चेकबॉक्स",
-            es: "Casillas de verificación",
-            fr: "Cases à cocher",
-            ar: "خانات اختيار",
-            bn: "চেকবক্স",
-            ru: "Флажки",
-            pt: "Caixas de Seleção",
-            id: "Kotak Centang"
-          },
-          questions: [
-            {
-              id: "q3",
-              type: "checkbox",
-              label: {
-                de: "Wählen Sie mehrere Optionen",
-                en: "Select multiple options",
-                zh: "选择多个选项",
-                hi: "कई विकल्प चुनें",
-                es: "Selecciona múltiples opciones",
-                fr: "Sélectionnez plusieurs options",
-                ar: "اختر خيارات متعددة",
-                bn: "একাধিক বিকল্প নির্বাচন করুন",
-                ru: "Выберите несколько вариантов",
-                pt: "Selecione várias opções",
-                id: "Pilih beberapa opsi"
-              },
-              options: ["Option A", "Option B", "Option C"],
-              tooltip: {
-                de: "Wählen Sie eine oder mehrere Optionen.",
-                en: "Select one or more options.",
-                zh: "选择一个或多个选项",
-                hi: "एक या अधिक विकल्प चुनें",
-                es: "Selecciona una o más opciones",
-                fr: "Sélectionnez une ou plusieurs options",
-                ar: "اختر خيارًا واحدًا أو أكثر",
-                bn: "এক বা একাধিক বিকল্প নির্বাচন করুন",
-                ru: "Выберите один или несколько вариантов",
-                pt: "Selecione uma ou mais opções",
-                id: "Pilih satu atau lebih opsi"
-              },
-              info: {
-                de: "Checkboxen erlauben Mehrfachauswahlen.",
-                en: "Checkboxes allow multiple selections.",
-                zh: "复选框允许多项选择",
-                hi: "चेकबॉक्स एक से अधिक विकल्प चुनने की अनुमति देते हैं",
-                es: "Las casillas permiten selecciones múltiples",
-                fr: "Les cases à cocher permettent des sélections multiples",
-                ar: "تسمح خانات الاختيار بتحديد عدة خيارات",
-                bn: "চেকবক্স একাধিক নির্বাচন করতে দেয়",
-                ru: "Флажки позволяют выбирать несколько вариантов",
-                pt: "Caixas de seleção permitem múltiplas escolhas",
-                id: "Kotak centang memungkinkan pilihan ganda"
-              },
-              required: false
             }
           ]
         }
@@ -391,8 +416,8 @@
                 en: "This editor supports basic formatting.",
                 zh: "此编辑器支持基本格式化",
                 hi: "यह संपादक बुनियादी स्वरूपण का समर्थन करता है",
-                es: "Este editor admite una formateo básico",
-                fr: "Cet éditeur prend en charge la mise en forme de base",
+                es: "Este editor admite une mise en forme basique.",
+                fr: "Cet éditeur prend en charge la mise en forme de base.",
                 ar: "يدعم هذا المحرر التنسيق الأساسي",
                 bn: "এই সম্পাদকটি মৌলিক ফরম্যাটিং সমর্থন করে",
                 ru: "Этот редактор поддерживает базовое форматирование",
@@ -515,11 +540,11 @@
                 hi: "उदाहरण: ![Example Image](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) या [Example Video](https://youtu.be/dQw4w9WgXcQ)",
                 es: "Ejemplo: ![Imagen de Ejemplo](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) o [Video de Ejemplo](https://youtu.be/dQw4w9WgXcQ)",
                 fr: "Exemple : ![Image d'exemple](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) ou [Vidéo d'exemple](https://youtu.be/dQw4w9WgXcQ)",
-                ar: "مثال: ![صورة مثال](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) أو [فيديو مثال](https://youtu.be/dQw4w9WgXcQ)",
-                bn: "উদাহরণ: ![উদাহরণ ছবি](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) অথবা [উদাহরণ ভিডিও](https://youtu.be/dQw4w9WgXcQ)",
-                ru: "Пример: ![Пример изображения](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) или [Пример видео](https://youtu.be/dQw4w9WgXcQ)",
-                pt: "Exemplo: ![Imagem de Exemplo](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) ou [Vídeo de Exemplo](https://youtu.be/dQw4w9WgXcQ)",
-                id: "Contoh: ![Gambar Contoh](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) atau [Video Contoh](https://youtu.be/dQw4w9WgXcQ)"
+                ar: "مثال: ![صورة مثال](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3) أو [فيديو مثال](https://youtu.be/dQw4w9WgXcQ)",
+                bn: "উদাহরণ: ![উদাহরণ ছবি](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3) অথবা [উদাহরণ ভিডিও](https://youtu.be/dQw4w9WgXcQ)",
+                ru: "Данный информационный блок содержит изображение и видео:\n\n![Пример изображения](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[Пример видео](https://youtu.be/dQw4w9WgXcQ)",
+                pt: "Example not available in Portuguese.",
+                id: "Example not available in Indonesian."
               },
               required: false
             }
@@ -589,15 +614,93 @@
               info: {
                 de: "Dieses Info-Feld enthält ein Bild und ein Video:\n\n![Beispielbild](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)\n\n[Beispielvideo](https://youtu.be/dQw4w9WgXcQ)",
                 en: "This info box contains an image and a video:\n\n![Example Image](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)\n\n[Example Video](https://youtu.be/dQw4w9WgXcQ)",
-                zh: "此信息框包含一张图片和一个视频：\n\n![示例图片](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)\n\n[示例视频](https://youtu.be/dQw4w9WgXcQ)",
-                hi: "इस जानकारी बॉक्स में एक चित्र और एक वीडियो शामिल है:\n\n![Example Image](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)\n\n[Example Video](https://youtu.be/dQw4w9WgXcQ)",
-                es: "Esta caja de información contiene una imagen y un video:\n\n![Imagen de Ejemplo](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)\n\n[Video de Ejemplo](https://youtu.be/dQw4w9WgXcQ)",
-                fr: "Cette boîte d'information contient une image et une vidéo :\n\n![Image d'exemple](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)\n\n[Vidéo d'exemple](https://youtu.be/dQw4w9WgXcQ)",
-                ar: "تحتوي هذه الصندوق المعلوماتي على صورة وفيديو:\n\n![صورة مثال](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)\n\n[فيديو مثال](https://youtu.be/dQw4w9WgXcQ)",
-                bn: "এই তথ্য বাক্সে একটি ছবি এবং একটি ভিডিও রয়েছে:\n\n![উদাহরণ ছবি](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)\n\n[উদাহরণ ভিডিও](https://youtu.be/dQw4w9WgXcQ)",
-                ru: "Этот информационный блок содержит изображение и видео:\n\n![Пример изображения](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)\n\n[Пример видео](https://youtu.be/dQw4w9WgXcQ)",
-                pt: "Exemplo: ![Imagem de Exemplo](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) ou [Vídeo de Exemplo](https://youtu.be/dQw4w9WgXcQ)",
-                id: "Contoh: ![Gambar Contoh](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) atau [Video Contoh](https://youtu.be/dQw4w9WgXcQ)"
+                zh: "此信息框包含一张图片和一个视频：\n\n![示例图片](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[示例视频](https://youtu.be/dQw4w9WgXcQ)",
+                hi: "इस जानकारी बॉक्स में एक चित्र और एक वीडियो शामिल है:\n\n![Example Image](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[Example Video](https://youtu.be/dQw4w9WgXcQ)",
+                es: "Esta caja de información contiene una imagen y un video:\n\n![Imagen de Ejemplo](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[Video de Ejemplo](https://youtu.be/dQw4w9WgXcQ)",
+                fr: "Cette boîte d'information contient une image et une vidéo :\n\n![Image d'exemple](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[Vidéo d'exemple](https://youtu.be/dQw4w9WgXcQ)",
+                ar: "هذا الصندوق يحتوي على صورة وفيديو:\n\n![صورة مثال](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[فيديو مثال](https://youtu.be/dQw4w9WgXcQ)",
+                bn: "এই তথ্য বাক্সে একটি ছবি এবং একটি ভিডিও রয়েছে:\n\n![উদাহরণ ছবি](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[উদাহরণ ভিডিও](https://youtu.be/dQw4w9WgXcQ)",
+                ru: "Данный информационный блок содержит изображение и видео:\n\n![Пример изображения](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[Пример видео](https://youtu.be/dQw4w9WgXcQ)",
+                pt: "Example not available in Portuguese.",
+                id: "Example not available in Indonesian."
+              },
+              required: false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      title: {
+        de: "Medieninfo Beispiel",
+        en: "Media Info Example",
+        zh: "媒体信息示例",
+        hi: "मीडिया जानकारी उदाहरण",
+        es: "Ejemplo de Información Multimedia",
+        fr: "Exemple d'information multimédia",
+        ar: "مثال على معلومات الوسائط",
+        bn: "মিডিয়া তথ্যের উদাহরণ",
+        ru: "Пример медиа информации",
+        pt: "Exemplo de Informação de Mídia",
+        id: "Contoh Info Media"
+      },
+      sections: [
+        {
+          heading: {
+            de: "Beispiel",
+            en: "Example",
+            zh: "示例",
+            hi: "उदाहरण",
+            es: "Ejemplo",
+            fr: "Exemple",
+            ar: "مثال",
+            bn: "উদাহরণ",
+            ru: "Пример",
+            pt: "Exemple",
+            id: "Contoh"
+          },
+          questions: [
+            {
+              id: "qMedia",
+              type: "text",
+              label: {
+                de: "Medieninfo",
+                en: "Media Info",
+                zh: "媒体信息",
+                hi: "मीडिया जानकारी",
+                es: "Información Multimedia",
+                fr: "Information multimédia",
+                ar: "معلومات الوسائط",
+                bn: "মিডিয়া তথ্য",
+                ru: "Медиа Информация",
+                pt: "Informação de Mídia",
+                id: "Info Media"
+              },
+              tooltip: {
+                de: "Beispiel: Markdown für Bild und Video",
+                en: "Example: Markdown for image and video",
+                zh: "示例：用于图片和视频的 Markdown",
+                hi: "उदाहरण: छवि और वीडियो के लिए मार्कडाउन",
+                es: "Ejemplo: Markdown para imagen y video",
+                fr: "Exemple : Markdown pour image et vidéo",
+                ar: "مثال: تنسيق Markdown للصور/الفيديو",
+                bn: "উদাহরণ: ছবি ও ভিডিওর জন্য মার্কডাউন",
+                ru: "Пример: Markdown для изображения и видео",
+                pt: "Exemplo: Markdown para imagem e vídeo",
+                id: "Contoh: Markdown untuk gambar dan video"
+              },
+              info: {
+                de: "Dieses Info-Feld enthält ein Bild und ein Video:\n\n![Beispielbild](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)\n\n[Beispielvideo](https://youtu.be/dQw4w9WgXcQ)",
+                en: "This info box contains an image and a video:\n\n![Example Image](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)\n\n[Example Video](https://youtu.be/dQw4w9WgXcQ)",
+                zh: "此信息框包含一张图片和一个视频：\n\n![示例图片](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[示例视频](https://youtu.be/dQw4w9WgXcQ)",
+                hi: "इस जानकारी बॉक्स में एक चित्र और एक वीडियो शामिल है:\n\n![Example Image](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[Example Video](https://youtu.be/dQw4w9WgXcQ)",
+                es: "Esta caja de información contiene una imagen y un video:\n\n![Imagen de Ejemplo](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[Video de Ejemplo](https://youtu.be/dQw4w9WgXcQ)",
+                fr: "Cette boîte d'information contient une image et une vidéo :\n\n![Image d'exemple](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[Vidéo d'exemple](https://youtu.be/dQw4w9WgXcQ)",
+                ar: "هذا الصندوق يحتوي على صورة وفيديو:\n\n![صورة مثال](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[فيديو مثال](https://youtu.be/dQw4w9WgXcQ)",
+                bn: "এই তথ্য বাক্সে একটি ছবি এবং একটি ভিডিও রয়েছে:\n\n![উদাহরণ ছবি](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[উদাহরণ ভিডিও](https://youtu.be/dQw4w9WgXcQ)",
+                ru: "Данный информационный блок содержит изображение и видео:\n\n![Пример изображения](https://images.unsplash.com/photo-1560264280-88b68371db39?q=80&w=2070&auto=format&fit=crop)\n\n[Пример видео](https://youtu.be/dQw4w9WgXcQ)",
+                pt: "Example not available in Portuguese.",
+                id: "Example not available in Indonesian."
               },
               required: false
             }
