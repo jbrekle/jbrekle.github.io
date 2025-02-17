@@ -1,0 +1,80 @@
+  /* Global Reset and styling for full‐screen layout */
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #ffeef8;
+    font-family: Arial, sans-serif;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  #gameCanvas {
+    background: #ffeef8;
+  }
+  /* Overlays: Menu, Pause, Win */
+  .menu-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.98);
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .menu-button, .avatar-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    margin: 10px;
+    cursor: pointer;
+    font-size: 1.2em;
+  }
+  .menu-button {
+    background: #ff99a0;
+    color: #fff;
+  }
+  .avatar-button {
+    background: #ffccdd;
+    border: 2px solid #ff6699;
+    color: #333;
+  }
+  .selected {
+    background: #ff6699;
+    color: #fff;
+  }
+  /* Explanation text on start screen */
+  #menuOverlay p.explanation {
+    width: 80%;
+    font-size: 1.1em;
+    margin-bottom: 20px;
+  }
+  /* Animated canvas inside the start overlay */
+  #menuAnim {
+    border: 1px solid transparent;
+    background: #ffeef8;
+    margin-bottom: 20px;
+  }
+  /* Pause overlay */
+  #pauseOverlay {
+    z-index: 30;
+    display: none;
+  }
+  /* Win overlay with its own animation canvas */
+  #winOverlay {
+    z-index: 40;
+    display: none;
+    flex-direction: column;
+  }
+  #winAnim {
+    border: 1px solid transparent;
+    background: #ffeef8;
+    margin-top: 20px;
+  }
