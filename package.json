@@ -7,7 +7,7 @@
     "build-subprojects-windows": "for /d %d in (*) do if exist \"%d\\package.json\" ( pushd \"%d\" && npm install --legacy-peer-deps && npm run build && popd )",
     
     "collect-dist": "node -e \"require('os').platform().startsWith('win') ? require('child_process').execSync('npm run collect-dist-windows', {stdio: 'inherit'}) : require('child_process').execSync('npm run collect-dist-unix', {stdio: 'inherit'})\"",
-    "collect-dist-unix": "rm -rf dist && mkdir dist && for d in */; do [ \"$d\" = \"dist/\" ] && continue; if [ -d \"$d/dist\" ]; then if [ \"${d%/}\" = \"businesspage.web\" ]; then cp -R \"$d/dist/\" \"dist/\"; else cp -R \"$d/dist\" \"dist/${d%/}\"; fi; fi; done",
+    "collect-dist-unix": "rm -rf dist || mkdir dist && for d in */; do [ \"$d\" = \"dist/\" ] && continue; if [ -d \"$d/dist\" ]; then if [ \"${d%/}\" = \"businesspage.web\" ]; then cp -R \"$d/dist/\" \"dist/\"; else cp -R \"$d/dist\" \"dist/${d%/}\"; fi; fi; done",
     "collect-dist-windows": "if exist dist rmdir /S /Q dist && mkdir dist && for /d %d in (*) do if /I not \"%d\" == \"dist\" ( if exist \"%d\\dist\" ( if \"%d\" == \"businesspage.web\" ( xcopy \"%d\\dist\" \"dist\" /E /I /f ) else ( xcopy \"%d\\dist\" \"dist\\%d\" /E /I /f ) ) )"
   }
 }
