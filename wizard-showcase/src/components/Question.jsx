@@ -14,6 +14,16 @@ import InfoBox from './InfoBox';
 import { localize } from '../utils/localize';
 import { useLanguage } from '../i18n';
 
+// NEW IMPORTS FOR EMAIL AND PHONE
+import EmailInput from './inputs/EmailInput';
+import PhoneInputField from './inputs/PhoneInput';
+
+/**
+ * Renders a single question based on its QuestionType.
+ * 
+ * CHANGES:
+ * - Added new cases for "email" and "phone" question types.
+ */
 function Question({ question, value, onChange, error, markTouched }) {
   const { language } = useLanguage();
 
@@ -107,9 +117,27 @@ function Question({ question, value, onChange, error, markTouched }) {
       );
       break;
     case 'explaination':
-      // For an explaination type, simply render the explanation text.
+      // For an explaination type, simply render the explanation text as markdown.
       inputElement = (
         <Explanation text={localize(question.label, language)} noBubble={question.noBubble} />
+      );
+      break;
+    // NEW CASES
+    case 'email':
+      inputElement = (
+        <EmailInput
+          value={value || ''}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+      );
+      break;
+    case 'phone':
+      inputElement = (
+        <PhoneInputField
+          value={value || ''}
+          onChange={handleChange}
+        />
       );
       break;
     default:

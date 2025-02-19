@@ -4,11 +4,21 @@ import CollapsibleSection from './CollapsibleSection';
 import Accordion from './Accordion';
 import { useLanguage } from '../i18n';
 import { localize } from '../utils/localize';
-import { validateAnswer } from '../utils/validation';
+import { useValidateAnswer } from '../utils/validation';
+import { Page } from '../configTypes';
 
-function Step({ page, answers, onAnswerChange, touched, markTouched }) {
+interface StepProps {
+  page: Page;
+  answers: { [key: string]: any };
+  onAnswerChange: (questionId: string, value: any) => void;
+  touched: { [key: string]: boolean };
+  markTouched: (questionId: string) => void;
+}
+
+const Step: React.FC<StepProps> = ({ page, answers, onAnswerChange, touched, markTouched }) => {
   const { language } = useLanguage();
-
+  const validate = useValidateAnswer();
+  
   return (
     <div>
       {page.sections.map((section, index) => {
@@ -21,9 +31,8 @@ function Step({ page, answers, onAnswerChange, touched, markTouched }) {
             )}
             {section.questions &&
               section.questions.map((question) => {
-                const error = touched[question.id]
-                  ? validateAnswer(question, answers[question.id], language)
-                  : '';
+                // Use the hook-based validate function.
+                const error = touched[question.id] ? validate(question, answers[question.id]) : '';
                 return (
                   <Question
                     key={question.id}
@@ -37,7 +46,6 @@ function Step({ page, answers, onAnswerChange, touched, markTouched }) {
               })}
           </div>
         );
-
         if (section.collapsible) {
           return (
             <CollapsibleSection key={index} title={localize(section.heading, language)} defaultOpen>
@@ -56,6 +64,7 @@ function Step({ page, answers, onAnswerChange, touched, markTouched }) {
       })}
     </div>
   );
-}
+};
 
 export default Step;
+  

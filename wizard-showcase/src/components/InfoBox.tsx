@@ -2,8 +2,12 @@
 import ReactMarkdown from 'react-markdown';
 import YouTubePlayer from './YouTubePlayer';
 
-// Custom link renderer to inline YouTube videos.
-const LinkRenderer = ({ href, children }) => {
+interface LinkRendererProps {
+  href: string;
+  children: React.ReactNode;
+}
+
+const LinkRenderer: React.FC<LinkRendererProps> = ({ href, children }) => {
   if (href && (href.includes('youtu.be') || href.includes('youtube.com'))) {
     let videoId = '';
     const ytRegex = /(?:youtu\.be\/|v=)([^&]+)/;
@@ -16,16 +20,26 @@ const LinkRenderer = ({ href, children }) => {
   return <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>;
 };
 
-// Displays an informational message below a question.
-// Renders markdown so that images and videos embedded in the text are displayed without wrapping <p> tags.
-function InfoBox({ text }) {
+interface InfoBoxProps {
+  text: string;
+}
+
+const InfoBox: React.FC<InfoBoxProps> = ({ text }) => {
   return (
     <div className="mt-1 p-2 bg-blue-50 border border-blue-200 text-blue-700 text-sm rounded">
-      <ReactMarkdown components={{ p: ({ node, ...props }) => <>{props.children}</>, a: LinkRenderer }}>
+      <ReactMarkdown
+        components={{
+          p: ({ node, ...props }) => <p {...props} />,
+          ul: ({ node, ...props }) => <ul className="list-disc ml-6" {...props} />,
+          ol: ({ node, ...props }) => <ol className="list-decimal ml-6" {...props} />,
+          a: LinkRenderer,
+        }}
+      >
         {text}
       </ReactMarkdown>
     </div>
   );
-}
+};
 
 export default InfoBox;
+  

@@ -1,5 +1,8 @@
 ﻿/**
  * This file defines TypeScript enums and classes for the tenant configuration.
+ * 
+ * CHANGES:
+ * - Added new QuestionType.Email and QuestionType.Phone.
  */
 
 export enum Comparer {
@@ -24,12 +27,15 @@ export enum QuestionType {
   File = "file",
   BigTileChoice = "bigTileChoice",
   Explaination = "explaination",
+  Email = "email",       // <--- NEW
+  Phone = "phone"        // <--- NEW
 }
 
 export class AbortCondition {
   comparer: Comparer;
   value: any;
   abortExplaination: string; // Markdown text to display when condition is met.
+
   constructor(comparer: Comparer, value: any, abortExplaination: string) {
     this.comparer = comparer;
     this.value = value;
@@ -42,6 +48,7 @@ export class Option {
   label: string;
   explaination?: string;
   image?: string;
+
   constructor(id: string, label: string, explaination?: string, image?: string) {
     this.id = id;
     this.label = label;
@@ -64,6 +71,7 @@ export class Question {
   max?: number;
   abortCondition?: AbortCondition;
   noBubble?: boolean;
+
   constructor(
     id: string,
     type: QuestionType,
@@ -100,6 +108,7 @@ export class Section {
   collapsible?: boolean;
   accordion?: boolean;
   questions: Question[];
+
   constructor(
     heading: { [lang: string]: string },
     questions: Question[],
@@ -116,6 +125,7 @@ export class Section {
 export class Page {
   title: { [lang: string]: string };
   sections: Section[];
+
   constructor(title: { [lang: string]: string }, sections: Section[]) {
     this.title = title;
     this.sections = sections;
@@ -130,6 +140,7 @@ export class Config {
   consultationMessage: { [lang: string]: string };
   consulationButtonLabel: { [lang: string]: string };
   contactQuestions?: Question[];
+
   constructor(
     title: { [lang: string]: string },
     theme: any,
@@ -148,4 +159,3 @@ export class Config {
     this.contactQuestions = contactQuestions;
   }
 }
-  

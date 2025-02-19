@@ -1,9 +1,15 @@
-﻿import React, { createContext, useContext, useState } from 'react';
+﻿import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-// A simple i18n context that supplies translations for common UI texts.
-const LanguageContext = createContext();
+export interface LanguageContextType {
+  language: string;
+  setLanguage: (lang: string) => void;
+  translate: (key: string) => string;
+  availableLanguages: { code: string; label: string }[];
+}
 
-const translations = {
+const LanguageContext = createContext<LanguageContextType>({} as LanguageContextType);
+
+const translations: { [lang: string]: { [key: string]: string } } = {
   de: {
     back: "Zurück",
     next: "Weiter",
@@ -12,7 +18,9 @@ const translations = {
     loading: "Konfiguration wird geladen...",
     submissionSuccess: "Ihre Antworten wurden übermittelt.",
     abortConditionMet: "Abbruchbedingung erfüllt",
-    contactInformation: "Kontaktinformationen"
+    contactInformation: "Kontaktinformationen",
+    fieldRequired: "Dieses Feld ist erforderlich.",
+    invalidEmail: "Ungültige E-Mail-Adresse."
   },
   en: {
     back: "Back",
@@ -22,7 +30,9 @@ const translations = {
     loading: "Loading configuration...",
     submissionSuccess: "Your responses have been submitted.",
     abortConditionMet: "Abort Condition Met",
-    contactInformation: "Contact Information"
+    contactInformation: "Contact Information",
+    fieldRequired: "This field is required.",
+    invalidEmail: "Invalid email address."
   },
   zh: {
     back: "返回",
@@ -32,7 +42,9 @@ const translations = {
     loading: "加载配置中...",
     submissionSuccess: "您的回答已提交。",
     abortConditionMet: "中止条件已满足",
-    contactInformation: "联系信息"
+    contactInformation: "联系信息",
+    fieldRequired: "此字段为必填项。",
+    invalidEmail: "无效的电子邮件地址。"
   },
   hi: {
     back: "वापस",
@@ -42,7 +54,9 @@ const translations = {
     loading: "कॉन्फ़िगरेशन लोड हो रहा है...",
     submissionSuccess: "आपके उत्तर जमा हो गए हैं।",
     abortConditionMet: "अग्निबीमारी शर्त पूरी हुई",
-    contactInformation: "संपर्क जानकारी"
+    contactInformation: "संपर्क जानकारी",
+    fieldRequired: "यह फ़ील्ड आवश्यक है।",
+    invalidEmail: "अमान्य ईमेल पता।"
   },
   es: {
     back: "Atrás",
@@ -52,7 +66,9 @@ const translations = {
     loading: "Cargando configuración...",
     submissionSuccess: "Tus respuestas han sido enviadas.",
     abortConditionMet: "Condición de aborto cumplida",
-    contactInformation: "Información de Contacto"
+    contactInformation: "Información de Contacto",
+    fieldRequired: "Este campo es obligatorio.",
+    invalidEmail: "Dirección de correo electrónico no válida."
   },
   fr: {
     back: "Retour",
@@ -62,7 +78,9 @@ const translations = {
     loading: "Chargement de la configuration...",
     submissionSuccess: "Vos réponses ont été soumises.",
     abortConditionMet: "Condition d'abandon satisfaite",
-    contactInformation: "Informations de Contact"
+    contactInformation: "Informations de Contact",
+    fieldRequired: "Ce champ est requis.",
+    invalidEmail: "Adresse e-mail invalide."
   },
   ar: {
     back: "عودة",
@@ -72,7 +90,9 @@ const translations = {
     loading: "جاري تحميل الإعدادات...",
     submissionSuccess: "تم إرسال إجاباتك.",
     abortConditionMet: "تم استيفاء شرط الإنهاء",
-    contactInformation: "معلومات الاتصال"
+    contactInformation: "معلومات الاتصال",
+    fieldRequired: "هذا الحقل مطلوب.",
+    invalidEmail: "عنوان البريد الإلكتروني غير صالح."
   },
   bn: {
     back: "পেছনে",
@@ -82,7 +102,9 @@ const translations = {
     loading: "কনফিগারেশন লোড হচ্ছে...",
     submissionSuccess: "আপনার উত্তর জমা হয়েছে।",
     abortConditionMet: "প্রয়োজনীয় শর্ত পূরণ হয়েছে",
-    contactInformation: "যোগাযোগের তথ্য"
+    contactInformation: "যোগাযোগের তথ্য",
+    fieldRequired: "এই ক্ষেত্রটি প্রয়োজনীয়।",
+    invalidEmail: "অবৈধ ইমেইল ঠিকানা।"
   },
   ru: {
     back: "Назад",
@@ -92,7 +114,9 @@ const translations = {
     loading: "Загрузка конфигурации...",
     submissionSuccess: "Ваши ответы были отправлены.",
     abortConditionMet: "Условие прерывания выполнено",
-    contactInformation: "Контактная информация"
+    contactInformation: "Контактная информация",
+    fieldRequired: "Это поле обязательно.",
+    invalidEmail: "Неверный адрес электронной почты."
   },
   pt: {
     back: "Voltar",
@@ -102,7 +126,9 @@ const translations = {
     loading: "Carregando configuração...",
     submissionSuccess: "Suas respostas foram enviadas.",
     abortConditionMet: "Condição de aborto satisfeita",
-    contactInformation: "Informações de Contato"
+    contactInformation: "Informações de Contato",
+    fieldRequired: "Este campo é obrigatório.",
+    invalidEmail: "Endereço de e-mail inválido."
   },
   id: {
     back: "Kembali",
@@ -112,7 +138,9 @@ const translations = {
     loading: "Memuat konfigurasi...",
     submissionSuccess: "Jawaban Anda telah dikirimkan.",
     abortConditionMet: "Kondisi pembatalan terpenuhi",
-    contactInformation: "Informasi Kontak"
+    contactInformation: "Informasi Kontak",
+    fieldRequired: "Bidang ini wajib diisi.",
+    invalidEmail: "Alamat email tidak valid."
   }
 };
 
@@ -130,18 +158,17 @@ export const availableLanguages = [
   { code: "id", label: "Bahasa Indonesia" }
 ];
 
-export const LanguageProvider = ({ defaultLanguage, children }) => {
-  const [language, setLanguage] = useState(
-    translations[defaultLanguage] ? defaultLanguage : "en"
-  );
+export const LanguageProvider: React.FC<{ defaultLanguage: string; children: ReactNode }> = ({ defaultLanguage, children }) => {
+  const [language, setLanguage] = useState<string>(translations[defaultLanguage] ? defaultLanguage : "en");
 
-  const t = (key) => translations[language][key] || key;
+  const translate = (key: string): string => translations[language][key] || key;
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, availableLanguages }}>
+    <LanguageContext.Provider value={{ language, setLanguage, translate, availableLanguages }}>
       {children}
     </LanguageContext.Provider>
   );
 };
 
-export const useLanguage = () => useContext(LanguageContext);
+export const useLanguage = (): LanguageContextType => useContext(LanguageContext);
+  
