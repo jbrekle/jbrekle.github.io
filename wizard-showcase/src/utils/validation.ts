@@ -13,16 +13,8 @@ export function useValidateAnswer(): (question: Question, value: any) => string 
 
   return (question: Question, value: any): string => {
     // If the field is required, ensure that a value is provided.
-    if (question.required) {
-      if (question.type === QuestionType.Checkbox) {
-        if (!value || value.length === 0) {
-          return translate('fieldRequired');
-        }
-      } else {
-        if (!value || (typeof value === 'string' && value.trim() === '')) {
-          return translate('fieldRequired');
-        }
-      }
+    if (question.required && (!value || value.length === 0 || (typeof value === 'string' && value.trim() === ''))) {
+      return translate('fieldRequired');
     }
 
     // Additional default validations per question type.

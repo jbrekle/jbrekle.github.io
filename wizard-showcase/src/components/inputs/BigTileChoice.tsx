@@ -7,7 +7,8 @@ interface BigTileChoiceProps {
   onChange: (value: string) => void;
 }
 
-const BigTileChoice: React.FC<BigTileChoiceProps> = ({ options, value, onChange }) => {
+const BigTileChoice: React.FC<BigTileChoiceProps> = ({ options, value, onChange }: BigTileChoiceProps) => {
+  if(!options || options.length == 0) return "error in config";
   return (
     <div className="flex space-x-2 my-4 custom-bigtile-container">
       {options.map(option => {

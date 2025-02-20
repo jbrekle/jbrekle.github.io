@@ -122,7 +122,6 @@ function Question({ question, value, onChange, error, markTouched }) {
         <Explanation text={localize(question.label, language)} noBubble={question.noBubble} />
       );
       break;
-    // NEW CASES
     case 'email':
       inputElement = (
         <EmailInput

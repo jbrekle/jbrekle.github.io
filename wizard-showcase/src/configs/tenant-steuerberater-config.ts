@@ -12,6 +12,31 @@
 const pages: Page[] = [
   new Page(
     {
+      de: "Willkommen",
+      en: "Welcome"
+    },
+    [
+      new Section(
+        {
+          de: "Betriebswirtschaftliche Hintergründe",
+          en: "Business and Economic Background"
+        },
+        [
+          new Question(
+            "qIntro",
+            QuestionType.Explaination,
+            {
+              de: "Eine Umwandlung des Einzelunternehmens in eine GmbH kann verschiedene Vorteile bieten, z. B. Haftungsbeschränkung oder steuerliche Optimierung. Weitere Informationen finden Sie etwa unter [Wikipedia: GmbH](https://de.wikipedia.org/wiki/Gesellschaft_mit_beschr%C3%A4nkter_Haftung) oder im [Umwandlungsgesetz (UmwG)](https://www.gesetze-im-internet.de/umwg/BJNR321010994.html).",
+              en: "Converting a sole proprietorship into a GmbH can offer several advantages, such as limited liability or tax optimization. For more details, see for example [Wikipedia: GmbH](https://en.wikipedia.org/wiki/Company_with_limited_liability) or consult the [German Transformation Act (UmwG)](https://www.gesetze-im-internet.de/umwg/)."
+            },
+            false
+          )
+        ]
+      )
+    ]
+  ),
+  new Page(
+    {
       de: "Sind Sie Einzelunternehmer?",
       en: "Are You a Single Entrepreneur?"
     },
@@ -35,8 +60,8 @@ const pages: Page[] = [
               en: "Select the applicable option."
             },
             {
-              de: "Nur ein Einzelunternehmen kann ggf. in vereinfachter Form umgewandelt werden. Siehe auch [Wikipedia: Einzelunternehmen](https://de.wikipedia.org/wiki/Einzelunternehmen).",
-              en: "Only a single-entrepreneur business can potentially be transformed in a simplified manner. See also [Wikipedia: Sole Proprietorship](https://en.wikipedia.org/wiki/Sole_proprietorship)."
+              de: "Nur ein Einzelunternehmen kann in vereinfachter Form umgewandelt werden. In einfacher Sprache: Eine Umwandlung eines Einzelunternehmens in eine GmbH bietet den Vorteil, dass das private Vermögen besser geschützt ist und das wirtschaftliche Risiko begrenzt bleibt. Dies kann zu verbesserten Finanzierungsmöglichkeiten und einer klareren Unternehmensstruktur führen. Zudem kann die steuerliche Belastung durch unterschiedliche Steuersätze reduziert werden. In juristischer Sprache: Gemäß den Bestimmungen des Umwandlungsgesetzes (UmwG) ist die Umwandlung eines Einzelunternehmens in eine GmbH zulässig, sofern die gesetzlichen Voraussetzungen erfüllt sind. Die Einhaltung der rechtlichen Rahmenbedingungen und steuerlichen Sonderregelungen ist verpflichtend.",
+              en: "Only a single-entrepreneur business can potentially be transformed in a simplified manner. In plain language: Converting a sole proprietorship into a limited liability company can protect personal assets and limit financial risks. It may lead to improved financing options and a more defined business structure. Additionally, tax burdens can be reduced through different rates and deductions. In legal language: Pursuant to the provisions of the Transformation Act (UmwG), the conversion of a sole proprietorship into a GmbH is permitted if the statutory requirements are met. Compliance with the legal framework and applicable tax regulations is mandatory."
             },
             undefined,
             undefined,
@@ -81,8 +106,8 @@ const pages: Page[] = [
               en: "Select one of the tiles."
             },
             {
-              de: "Die Ausgliederung im Ganzen kann in bestimmten Fällen weniger komplex sein. Vgl. §§ 152 ff. UmwG (Ausgliederung).",
-              en: "A full spin-off can be less complex in certain cases. Compare §§ 152 ff. German Transformation Act (UmwG)."
+              de: "Die vollständige Übertragung eines Unternehmensbereichs kann oft einfacher organisiert werden. In einfacher Sprache: Wenn das gesamte Unternehmen übertragen wird, sind die Verantwortlichkeiten klar geregelt und die Abläufe werden vereinfacht. Dies kann zu einer stabileren finanziellen Struktur beitragen und betriebliche Risiken minimieren. Zudem ermöglicht es einen einheitlichen Umgang mit steuerlichen Regelungen. In juristischer Sprache: Die Vorschriften der §§ 152 ff. UmwG bieten einen Rahmen für eine vereinfachte Ausgliederung unter Beachtung spezifischer gesetzlicher Anforderungen.",
+              en: "A full transfer of business operations can often be more straightforward. In plain language: When the entire business is transferred, responsibilities are clearly defined and processes are simplified. This can contribute to a more stable financial structure and minimize operational risks. It also allows for a unified approach to tax matters. In legal language: The provisions in §§ 152 ff. of the German Transformation Act provide a framework for a simplified spin-off, subject to specific legal requirements."
             },
             undefined,
             undefined,
@@ -127,8 +152,8 @@ const pages: Page[] = [
               en: "Select the appropriate option."
             },
             {
-              de: "Die Einbringung von Immobilien erfordert besondere Beurkundungen. Vgl. [BGB § 311b](https://www.gesetze-im-internet.de/bgb/__311b.html).",
-              en: "The contribution of real estate requires special notarization. Compare [German Civil Code § 311b](https://www.gesetze-im-internet.de/englisch_bgb/englisch_bgb.html#p1199)."
+              de: "Immobilienübertragungen sind mit besonderen Formalitäten verbunden. In einfacher Sprache: Der Verkauf oder die Übertragung von Immobilien muss notariell beurkundet werden, um alle rechtlichen Anforderungen zu erfüllen. Dies schützt sowohl Käufer als auch Verkäufer vor zukünftigen Streitigkeiten. Alle Dokumente müssen sorgfältig erstellt und geprüft werden. In juristischer Sprache: Nach § 311b BGB ist für Immobilienverträge eine notarielle Beurkundung zwingend vorgeschrieben, um die Rechtssicherheit zu gewährleisten.",
+              en: "Transferring real estate involves special formalities. In plain language: The sale or transfer of property must be notarized to ensure that all legal requirements are met, protecting both buyers and sellers from future disputes. All documents must be properly prepared and reviewed. In legal language: According to § 311b of the German Civil Code, notarization is mandatory for real estate contracts to ensure legal certainty."
             },
             undefined,
             undefined,
@@ -173,8 +198,8 @@ const pages: Page[] = [
               en: "Select the appropriate option."
             },
             {
-              de: "Immaterialgüterrechte wie Patente oder Marken können eine eigene Bewertung nötig machen. Siehe [Wikipedia: Immaterialgüterrecht](https://de.wikipedia.org/wiki/Immaterialg%C3%BCterrecht).",
-              en: "Intellectual property rights such as patents or trademarks may require valuation. See [Wikipedia: Intellectual property](https://en.wikipedia.org/wiki/Intellectual_property)."
+              de: "Die Bewertung von immateriellen Gütern ist oft komplex. In einfacher Sprache: Rechte an Patenten, Marken oder Lizenzen sind wichtig für den wirtschaftlichen Erfolg eines Unternehmens. Eine präzise Bewertung dieser Rechte hilft, den tatsächlichen Unternehmenswert zu ermitteln und unterstützt Finanzierungsentscheidungen. Zudem können solche Bewertungen zur Optimierung der Steuerlast beitragen. In juristischer Sprache: Die Bewertung immaterieller Vermögenswerte erfolgt unter Beachtung handelsrechtlicher und steuerrechtlicher Bewertungsgrundsätze.",
+              en: "Valuing intangible assets can be complex. In plain language: Rights such as patents, trademarks, or licenses play a crucial role in a company's economic success. A precise valuation of these rights helps determine the true value of the business and supports financing decisions. It can also contribute to optimizing tax liabilities. In legal language: The valuation of intangible assets is conducted in accordance with relevant commercial and tax principles."
             },
             undefined,
             undefined,
@@ -219,8 +244,8 @@ const pages: Page[] = [
               en: "Select the applicable option."
             },
             {
-              de: "Eine Einbringung mit umfangreichen Verbindlichkeiten kann juristisch und steuerlich komplex sein. Vgl. [Wikipedia: Sicherungsrechte](https://de.wikipedia.org/wiki/Sicherungsmittel_im_Kreditsicherungsrecht).",
-              en: "A contribution with extensive liabilities can be legally and tax-wise complex. See [Wikipedia: Security (finance)](https://en.wikipedia.org/wiki/Security_(finance))."
+              de: "Hohe Verbindlichkeiten im Unternehmen erfordern eine sorgfältige Prüfung. In einfacher Sprache: Wenn ein Unternehmen viele Schulden und Sicherheiten hat, kann dies den Geschäftsbetrieb erheblich beeinflussen. Es ist wichtig, dass alle finanziellen Verpflichtungen klar dokumentiert und bewertet werden, um Risiken zu minimieren und eine stabile wirtschaftliche Basis zu schaffen. In juristischer Sprache: Die Übertragung eines Unternehmens mit erheblichen Verbindlichkeiten unterliegt strengen rechtlichen und steuerlichen Vorschriften. Eine detaillierte Prüfung der finanziellen Situation und die Einhaltung spezifischer Formvorschriften sind erforderlich.",
+              en: "High liabilities within a business require careful review. In plain language: When a company has significant debts and securities, these can greatly affect its operations. It is important that all financial obligations are clearly documented and evaluated to minimize risks and establish a stable economic foundation. In legal language: The transfer of a business with substantial liabilities is subject to strict legal and tax regulations. A detailed assessment of the financial situation and compliance with specific formal requirements are necessary."
             },
             undefined,
             undefined,
@@ -235,31 +260,6 @@ const pages: Page[] = [
               "yes",
               "Bei wesentlichen Verbindlichkeiten mit Sicherheiten ist eine individuelle Beratung nötig."
             )
-          )
-        ]
-      )
-    ]
-  ),
-  new Page(
-    {
-      de: "Ergebnis",
-      en: "Result"
-    },
-    [
-      new Section(
-        {
-          de: "Betriebswirtschaftliche Hintergründe",
-          en: "Business and Economic Background"
-        },
-        [
-          new Question(
-            "qConclusion",
-            QuestionType.Explaination,
-            {
-              de: "Eine Umwandlung des Einzelunternehmens in eine GmbH kann verschiedene Vorteile bieten, z. B. Haftungsbeschränkung oder steuerliche Optimierung. Weitere Informationen finden Sie etwa unter [Wikipedia: GmbH](https://de.wikipedia.org/wiki/Gesellschaft_mit_beschr%C3%A4nkter_Haftung) oder im [Umwandlungsgesetz (UmwG)](https://www.gesetze-im-internet.de/umwg/BJNR321010994.html).",
-              en: "Converting a sole proprietorship into a GmbH can offer several advantages, such as limited liability or tax optimization. For more details, see for example [Wikipedia: GmbH](https://en.wikipedia.org/wiki/Company_with_limited_liability) or consult the [German Transformation Act (UmwG)](https://www.gesetze-im-internet.de/umwg/)."
-            },
-            false
           )
         ]
       )
@@ -306,11 +306,11 @@ const config: Config = new Config(
     primaryColor: "green",
     secondaryColor: "gray"
   },
-  true, // Demo mode is now true
+  true, // Demo mode means nothing is sent to server, just logged to console
   pages,
   {
-    de: "Ihr Dialog ist beendet. Für weitere Hilfe kontaktieren wir Sie persönlich.",
-    en: "Your session has ended. For further assistance, we will contact you personally."
+    de: "Ihr Fall lässt sich nicht über unsere Online Funktion automatisiert bearbeitent, wir kontaktieren  Sie persönlich.",
+    en: "Your case cannot be processed automatically using our online tool; we will contact you personally."
   },
   {
     de: "Kontaktieren Sie uns",
