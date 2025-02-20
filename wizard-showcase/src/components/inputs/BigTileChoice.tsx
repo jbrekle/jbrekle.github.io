@@ -9,7 +9,7 @@ interface BigTileChoiceProps {
 
 const BigTileChoice: React.FC<BigTileChoiceProps> = ({ options, value, onChange }) => {
   return (
-    <div className="flex space-x-4 custom-bigtile-container">
+    <div className="flex space-x-2 my-4 custom-bigtile-container">
       {options.map(option => {
         const isSelected = value === option.id;
         return (

@@ -1,23 +1,14 @@
-﻿import { defineConfig } from 'vite'
+﻿// content-start Filename: wizard-showcase\vite.config.js
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import copy from 'rollup-plugin-copy';
+import fs from 'fs/promises'
+import path from 'path'
+import fg from 'fast-glob'
 
 export default defineConfig({
   base: '',
   plugins: [
-    react(),
-    copy({
-      targets: [
-        // directly to the build "dist" folder with no modifications.
-        { src: 'src/configs/tenant-*-config.ts', dest: 'dist/assets/configs' }
-      ],
-      // Use hook: 'writeBundle' to ensure the copy happens after the build is done
-      hook: 'writeBundle'
-    })
-  ], 
-  resolve: {
-    alias     : {
-        'assets/configs/tenant-steuerberater-config': "assets/configs/tenant-steuerberater-config.ts"
-      }
-    }
+    react()
+  ]
 })
+// content-end Filename: wizard-showcase\vite.config.js
